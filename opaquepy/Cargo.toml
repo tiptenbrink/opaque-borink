@@ -1,0 +1,18 @@
+[package]
+name = "opaquepy"
+version = "0.1.5"
+edition = "2021"
+
+[lib]
+name = "opaquepy"
+crate-type = ["cdylib"]
+
+[dependencies]
+opaquebind_core = { path = "../opaquebind_core" }
+
+[dependencies.pyo3]
+version = "~0.14"
+features = ["extension-module"]
+
+[package.metadata.maturin]
+python-source = "python"
