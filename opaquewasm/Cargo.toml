@@ -1,6 +1,6 @@
 [package]
 name = "opaquewasm"
-version = "0.1.7"
+version = "0.2.0"
 authors = ["tiptenbrink <75669206+tiptenbrink@users.noreply.github.com>"]
 edition = "2021"
 
@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 wasm-bindgen = "0.2.63"
 js-sys = "0.3.55"
-opaquebind_core = { path = "../opaquebind_core" }
+opaquebind_core = { package = "opaquebind", path = "../opaquebind" }
 getrandom = { version = "0.2", features = ["js"] }
 
 [dev-dependencies]

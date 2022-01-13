@@ -1,6 +1,6 @@
 [project]
 name = "opaquepy"
-version = "0.1.7"
+version = "0.2.0"
 description = "Python bindings for opaque-ke."
 readme = "README.md"
 requires-python = ">=3.9, <3.11"
@@ -12,7 +12,7 @@ authors = [
 
 [tool.poetry]
 name = "opaquepy"
-version = "0.1.7"
+version = "0.2.0"
 description = "Python bindings for opaque-ke."
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 license = "Apache-2"
