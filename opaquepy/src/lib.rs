@@ -1,5 +1,5 @@
-use opaquebind_core::{Error, generate_keys};
-use opaquebind_core::server::{register_server, register_server_finish, login_server, login_server_finish};
+use opaquebind::{Error, generate_keys};
+use opaquebind::server::{register_server, register_server_finish, login_server, login_server_finish};
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 

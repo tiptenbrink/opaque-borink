@@ -1,8 +1,7 @@
 use std::fmt::Debug;
 use wasm_bindgen::prelude::*;
-use opaquebind_core::Error;
-use opaquebind_core::client::{client_register, client_register_finish, client_login, client_login_finish};
-use opaquebind_core::{PakeError, ProtocolError};
+use opaquebind::client::{client_register, client_register_finish, client_login, client_login_finish};
+use opaquebind::{Error, PakeError, ProtocolError};
 
 pub type OpaqueJsResult<T> = Result<T, JsValue>;
 

@@ -8,7 +8,7 @@ name = "opaquepy"
 crate-type = ["cdylib"]
 
 [dependencies]
-opaquebind_core = { package = "opaquebind", path = "../opaquebind" }
+opaquebind = { path = "../opaquebind" }
 
 [dependencies.pyo3]
 version = "~0.14"
