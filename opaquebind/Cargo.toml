@@ -1,6 +1,6 @@
 [package]
 name = "opaquebind"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 license = "Apache-2.0"

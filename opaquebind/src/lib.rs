@@ -1,6 +1,7 @@
 pub mod server;
 pub mod client;
 
+use std::fmt::{Debug, Display, Formatter, Pointer};
 use argon2::Argon2;
 use curve25519_dalek;
 use curve25519_dalek::ristretto::RistrettoPoint;
@@ -44,11 +45,20 @@ impl<D: Hash> SlowHash<D> for ArgonWrapper {
     }
 }
 
+#[derive(Debug)]
 pub enum Error {
     ProtocolError(ProtocolError),
     PakeError(PakeError),
     DecodeError(DecodeError)
 }
+
+impl Display for Error {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", &self)
+    }
+}
+
+impl std::error::Error for Error {}
 
 impl From<ProtocolError> for Error {
     fn from(e: ProtocolError) -> Self {
