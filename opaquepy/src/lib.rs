@@ -1,5 +1,6 @@
 use opaquebind::{Error, generate_keys};
 use opaquebind::server::{register_server, register_server_finish, login_server, login_server_finish};
+use opaquebind::client::{client_register, client_register_finish};
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 
@@ -24,15 +25,14 @@ impl From<OpaquePyError> for PyErr {
 }
 
 #[pymodule]
-fn opaquepy(py: Python<'_>, m: &PyModule) -> PyResult<()> {
-    let opqrust = PyModule::new(py, "_opqrust")?;
-    opqrust.add_function(wrap_pyfunction!(generate_keys_py, opqrust)?)?;
-    opqrust.add_function(wrap_pyfunction!(register_server_py, opqrust)?)?;
-    opqrust.add_function(wrap_pyfunction!(register_server_finish_py, opqrust)?)?;
-    opqrust.add_function(wrap_pyfunction!(login_server_py, opqrust)?)?;
-    opqrust.add_function(wrap_pyfunction!(login_server_finish_py, opqrust)?)?;
-
-    m.add_submodule(opqrust)?;
+fn _opaquepy(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(generate_keys_py, m)?)?;
+    m.add_function(wrap_pyfunction!(register_server_py, m)?)?;
+    m.add_function(wrap_pyfunction!(register_server_finish_py, m)?)?;
+    m.add_function(wrap_pyfunction!(register_client_py, m)?)?;
+    m.add_function(wrap_pyfunction!(register_client_finish_py, m)?)?;
+    m.add_function(wrap_pyfunction!(login_server_py, m)?)?;
+    m.add_function(wrap_pyfunction!(login_server_finish_py, m)?)?;
 
     Ok(())
 }
@@ -50,6 +50,16 @@ fn register_server_py(client_request: String, public_key: String) -> OpaquePyRes
 #[pyfunction]
 fn register_server_finish_py(client_request_finish: String, registration_state: String) -> OpaquePyResult<String> {
     Ok(register_server_finish(client_request_finish, registration_state)?)
+}
+
+#[pyfunction]
+fn register_client_py(password: String) -> OpaquePyResult<(String, String)> {
+    Ok(client_register(&password)?)
+}
+
+#[pyfunction]
+fn register_client_finish_py(client_register_state: String, server_message: String) -> OpaquePyResult<String> {
+    Ok(client_register_finish(&client_register_state, &server_message)?)
 }
 
 #[pyfunction]
