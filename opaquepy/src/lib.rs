@@ -25,14 +25,17 @@ impl From<OpaquePyError> for PyErr {
 }
 
 #[pymodule]
-fn _opaquepy(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(generate_keys_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_server_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_server_finish_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_client_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_client_finish_py, m)?)?;
-    m.add_function(wrap_pyfunction!(login_server_py, m)?)?;
-    m.add_function(wrap_pyfunction!(login_server_finish_py, m)?)?;
+fn opaquepy(py: Python<'_>, m: &PyModule) -> PyResult<()> {
+    let opqrust = PyModule::new(py, "_opqrust")?;
+    opqrust.add_function(wrap_pyfunction!(generate_keys_py, opqrust)?)?;
+    opqrust.add_function(wrap_pyfunction!(register_server_py, opqrust)?)?;
+    opqrust.add_function(wrap_pyfunction!(register_server_finish_py, opqrust)?)?;
+    opqrust.add_function(wrap_pyfunction!(register_client_py, m)?)?;
+    opqrust.add_function(wrap_pyfunction!(register_client_finish_py, m)?)?;
+    opqrust.add_function(wrap_pyfunction!(login_server_py, opqrust)?)?;
+    opqrust.add_function(wrap_pyfunction!(login_server_finish_py, opqrust)?)?;
+
+    m.add_submodule(opqrust)?;
 
     Ok(())
 }

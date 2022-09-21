@@ -3,8 +3,11 @@ name = "opaquepy"
 version = "0.2.1"
 edition = "2021"
 
+[package.metadata.maturin]
+python-source = "python"
+
 [lib]
-name = "_opaquepy"
+name = "opaquepy"
 crate-type = ["cdylib"]
 
 [dependencies]
@@ -13,6 +16,3 @@ opaquebind = { path = "../opaquebind" }
 [dependencies.pyo3]
 version = "0.17.1"
 features = ["extension-module"]
-
-[package.metadata.maturin]
-python-source = "python"
