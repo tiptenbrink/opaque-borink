@@ -27,7 +27,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.local
-        key: poetry-${{ matrix.py-version }}
+        key: poetry1-${{ matrix.py-version }}
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
@@ -42,7 +42,7 @@ jobs:
       with:
         path: opaquepy/.venv
         # Key only changes if poetry.lock changes
-        key: venv-${{ runner.os }}-${{ matrix.py-version }}-${{ hashFiles('**/poetry.lock') }}
+        key: venv1-${{ runner.os }}-${{ matrix.py-version }}-${{ hashFiles('**/poetry.lock') }}
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
