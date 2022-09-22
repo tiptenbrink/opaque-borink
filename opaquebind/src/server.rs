@@ -36,8 +36,8 @@ pub fn register_server_finish(client_request_finish: String) -> Result<String, E
 pub fn login_server(server_setup: String, password_file: String, client_request: String, credential_id: String) -> Result<(String, String), Error> {
     let password_file_bytes = base64::decode_config(password_file, base64::URL_SAFE_NO_PAD)?;
     let setup_bytes = base64::decode_config(server_setup, base64::URL_SAFE_NO_PAD)?;
-    let credential_bytes = credential_id.as_bytes();
     let request_bytes = base64::decode_config(client_request, base64::URL_SAFE_NO_PAD)?;
+    let credential_bytes = credential_id.as_bytes();
     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
     let password_file= ServerRegistration::<Cipher>::deserialize(&password_file_bytes)?;
     let client_request: Box<CredentialRequest<Cipher>> = Box::new(CredentialRequest::deserialize(&request_bytes)?);
@@ -155,7 +155,7 @@ mod tests {
         let session = login_server_finish(client_message, state).unwrap();
 
         println!("{}", session)
-        // example session key 
+        // example session key
         // pzt_-CKrOufYAsdCKzmaMZwQ78ZPLB1zTtffoJswFRoAEKfsBEQqFtxT-odtT2cEQPfQFkjntmBE3PlS_zLUUw
     }
 }
