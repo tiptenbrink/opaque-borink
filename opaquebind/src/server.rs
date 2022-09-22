@@ -9,11 +9,11 @@ use crate::Error;
 pub fn register_server(server_setup: String, client_request: String, credential_id: String) -> Result<String, Error> {
     let setup_bytes = base64::decode_config(server_setup, base64::URL_SAFE_NO_PAD)?;
     let request_bytes = base64::decode_config(client_request, base64::URL_SAFE_NO_PAD)?;
-    let credential_bytes = base64::decode_config(credential_id, base64::URL_SAFE_NO_PAD)?;
+    let credential_bytes = credential_id.as_bytes();
     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
     let client_request: RegistrationRequest<Cipher> = RegistrationRequest::deserialize(&request_bytes)?;
 
-    let s = opaque_server_register(setup, client_request, &credential_bytes)?;
+    let s = opaque_server_register(setup, client_request, credential_bytes)?;
 
     let response_bytes = s.message.serialize();
     let response_encoded = base64::encode_config(response_bytes, base64::URL_SAFE_NO_PAD);
@@ -33,16 +33,16 @@ pub fn register_server_finish(client_request_finish: String) -> Result<String, E
     Ok(password_file_encoded)
 }
 
-pub fn login_server(password_file: String, client_request: String, server_setup: String, credential_id: String) -> Result<(String, String), Error> {
+pub fn login_server(server_setup: String, password_file: String, client_request: String, credential_id: String) -> Result<(String, String), Error> {
     let password_file_bytes = base64::decode_config(password_file, base64::URL_SAFE_NO_PAD)?;
     let setup_bytes = base64::decode_config(server_setup, base64::URL_SAFE_NO_PAD)?;
-    let credential_bytes = base64::decode_config(credential_id, base64::URL_SAFE_NO_PAD)?;
+    let credential_bytes = credential_id.as_bytes();
     let request_bytes = base64::decode_config(client_request, base64::URL_SAFE_NO_PAD)?;
     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
     let password_file= ServerRegistration::<Cipher>::deserialize(&password_file_bytes)?;
     let client_request: Box<CredentialRequest<Cipher>> = Box::new(CredentialRequest::deserialize(&request_bytes)?);
 
-    let s = opaque_server_login(setup, password_file, client_request, &credential_bytes)?;
+    let s = opaque_server_login(setup, password_file, client_request, credential_bytes)?;
 
     let response_bytes = s.message.serialize();
     let state_bytes = s.state.serialize();
@@ -105,49 +105,57 @@ fn opaque_server_login_finish(client_request_finish: Box<CredentialFinalization<
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn server_register() {
-    //     //password 'garbage'
-    //     let message = "Pj8bFY58CZoyi9Rsp2KyS4HhA2vXcSEAFH7BViwxRzw".to_string();
-    //     let pub_string = "OhKbj6rzdot9c9y_RCcFcIKYozF2OaOHW7A6-UhveQo".to_string();
-    //
-    //     let (response, state) = register_server_py(message, pub_string).unwrap();
-    //     println!("{}", response);
-    //     println!("{}", state);
-    // }
-    //
-    // #[test]
-    // fn server_register_finish() {
-    //     let client_message = "WiiA158EDDe0lHHfg0C8HrhAnAh3AUfqanzVbsajm0IBmDAbxVcbUp5MVFm759dCz5YvNYlpZw5NQoaQFAJHkPmufK3_FFdV87nQ7bfp7BZ5BURZgLp6O_b0FlE80IKksTQFXN2mo8QqrVlIQPJ1DiAtr5FGuXqaSkduYkJyGRLXy_RzSmkME8Fs1zYqTPM-fAzzRjbRJBfOKdcuiJSzyFU".to_string();
-    //     let server_state = "bdbAbu6_ZGoJUShySB6qx8oQrpNXz3CCWd_7qC1J2ws".to_string();
-    //     let password_file = register_server_finish_py(client_message, server_state).unwrap();
-    //     println!("{}", password_file)
-    //
-    //     // example file:
-    //     // bdbAbu6_ZGoJUShySB6qx8oQrpNXz3CCWd_7qC1J2wtaKIDXnwQMN7SUcd-DQLweuECcCHcBR-pqfNVuxqObQgGYMBvFVxtSnkxUWbvn10LPli81iWlnDk1ChpAUAkeQ-a58rf8UV1XzudDtt-nsFnkFRFmAuno79vQWUTzQgqSxNAVc3aajxCqtWUhA8nUOIC2vkUa5eppKR25iQnIZEtfL9HNKaQwTwWzXNipM8z58DPNGNtEkF84p1y6IlLPIVQ
-    // }
-    //
-    // #[test]
-    // fn server_login() {
-    //     let client_message = "UD06GXLMCcJr-EaYonw0zKGQ9FMeMJ55Mh_H5yJ2S1AuF_sQmykFADMj9vdgA1Umw2SwtH0Tai0lOdF1WAM0TAAA_gVx9nSVv9YgIw5aMsrg67LJTZBm7DDQG4O6XpK9Rlw".to_string();
-    //     // password 'abc'
-    //     let password_file = "bdbAbu6_ZGoJUShySB6qx8oQrpNXz3CCWd_7qC1J2wtaKIDXnwQMN7SUcd-DQLweuECcCHcBR-pqfNVuxqObQgGYMBvFVxtSnkxUWbvn10LPli81iWlnDk1ChpAUAkeQ-a58rf8UV1XzudDtt-nsFnkFRFmAuno79vQWUTzQgqSxNAVc3aajxCqtWUhA8nUOIC2vkUa5eppKR25iQnIZEtfL9HNKaQwTwWzXNipM8z58DPNGNtEkF84p1y6IlLPIVQ".to_string();
-    //     let private_key = "QNxnQ_c-rx2nmuLAOTln5Ul60XYqNz_yws_WG8BoAAc".to_string();
-    //
-    //     let (response, state) = login_server_py(password_file, client_message, private_key).unwrap();
-    //
-    //     println!("{}", response);
-    //     println!("{}", state);
-    // }
-    //
-    // #[test]
-    // fn server_login_finish() {
-    //     // correspond to above
-    //     let client_message = "YHLmz1dB6XXkFabmzSctR53HskpKEWcZVvXEcswegia2OVbC4NezY1jqhzGN-z7trO8SCe_IbEyeg1n04UkJXw".to_string();
-    //     let state = "3soQ8dLh007sMpOUvyBM4o0FDp-sHHXMu-WU1rtofMtjT5veRMmrv3KmZDTaAzGTxP442NYS-0_XpjPyLN_O9_UKQV92Cv6YvpFWwrNJlye_XfrwUV9fm9JCCA5R0CHCN9PVcrarW_1-GmSd5KitAr57LeS0Ne6fWZsYtI6yM6GkphmMAcxzykJxtyqicpmF3gjesD-Nbgktp7A3d066kHUZ4DRredc9NaF-gdVg76PtE8dVuL9aVEN2reciq54U".to_string();
-    //
-    //     let session = login_server_finish_py(client_message, state).unwrap();
-    //
-    //     println!("{}", session)
-    // }
+    #[test]
+    fn server_register_output() {
+        // password 'clientele'
+        let setup = "C5HVEMyOKYglRys_3a58GHLeRM0oa_pjxSO6mu-WEnfIdOO5mE7GpCz_Z0xrntzbeMQI3GACQet9N_3lh1eaEWM18tqMDhUEJ_TwfSJNEXavKLc2DHlxWcd5Xd8aiPMJJ11dZmU76urlWHZw5xJuvDfLbdnt2tIj-fmY9PobZQg".to_string();
+        let message = "3i3SEzJNZKvsIfADx1lf-zk4SNeitkTp41-kpxWOUxE".to_string();
+        let cred_id = "someperson".to_string();
+
+        let response = register_server(setup, message, cred_id).unwrap();
+        println!("{}", response);
+        // example response
+        // mKbmMmzMVuq9r2yrfWtJXQCYTFVxAD3ZHkPLFhGY-hqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew
+    }
+
+    #[test]
+    fn server_register_finish() {
+        let client_message = "wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy".to_string();
+        let password_file = register_server_finish(client_message).unwrap();
+        println!("{}", password_file)
+
+        // example file:
+        // wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy
+    }
+
+    #[test]
+    fn server_login() {
+        let setup = "C5HVEMyOKYglRys_3a58GHLeRM0oa_pjxSO6mu-WEnfIdOO5mE7GpCz_Z0xrntzbeMQI3GACQet9N_3lh1eaEWM18tqMDhUEJ_TwfSJNEXavKLc2DHlxWcd5Xd8aiPMJJ11dZmU76urlWHZw5xJuvDfLbdnt2tIj-fmY9PobZQg".to_string();
+        let client_message = "iIx1sW5pj2GlKnb4V1MRrCFmLTkW_hhyXQCGmczMZUJZ50HlQnVjuPyvv6oKpD7d0ZzPDbZcnliqDlN-GHdrwUpAvLRYzwk1earfTNefonfH9faSj7307IMRwrfGyOhZ".to_string();
+        // password 'clientiele'
+        let password_file = "wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy".to_string();
+        let cred_id = "someperson".to_string();
+
+        let (response, state) = login_server(setup, password_file, client_message, cred_id).unwrap();
+
+        println!("{}", response);
+        println!("{}", state);
+        // example response
+        // 1kHXX25U1NE0nki_rL-5KnPRre6-CD2P4ApqhDOXL2m5xgVIT1oO4M5n5r6b2mfGx7Xq4kiMFQH8pfrGLok2H0A20_p30giVapbzQL1QYRiG2jJK2AUlhOK6lTr5YshNJNOqHgn0eGFUWiYwZ606pYfIJDaiUa5p9Mhmb9lWTpzP9akkvjDkbaxViRLB_-T9QZyTjiy-67bkepYWTeCEnqrkdw-_ckKEcBRJrlVX0yMqHtzwMdoMX6LKdT02BCXMde7kdxT5mWUMcMozBg0SLrTAehZiHgqQYq94TAK-lmiePUljPSSHFERFm-0h7r2t2QL-hLi1DmY53upbKvTQFyN-IzuAmK7UsG4MgcYVcGKQXlrF4keZVJaa5dOz5YaFYp1oBXm26hUdtKzXf-9gVTtlDc3ep-G8GNyiDNLiVwU
+        // example state
+        // NjqD_19cS-XSDTfOdHj5g8wC1zMlTy-ydF4kiwKHUjbC9e_8CZb4pkLi9t0694FS_QgT6T_jktK1PbSoPqsTyas6rleW5Ttf0yA_a488YahFnBYHhsjXRWccL4Y6atjNeFcYOhc2f6t5oLU4p_FIA1eKQQFNRMXxEXEuHDl_DKanO3_4Iqs659gCx0IrOZoxnBDvxk8sHXNO19-gmzAVGgAQp-wERCoW3FP6h21PZwRA99AWSOe2YETc-VL_MtRT
+    }
+
+    #[test]
+    fn server_login_finish() {
+        // correspond to above
+        let client_message = "eP_3skqnrkJXs-AZpXqaxihP4EsF1ek8eDxH4ktDflExfEvNF99-oVZ24hkahw05v-rH9B-1WCs91dGteIMH9Q".to_string();
+        let state = "NjqD_19cS-XSDTfOdHj5g8wC1zMlTy-ydF4kiwKHUjbC9e_8CZb4pkLi9t0694FS_QgT6T_jktK1PbSoPqsTyas6rleW5Ttf0yA_a488YahFnBYHhsjXRWccL4Y6atjNeFcYOhc2f6t5oLU4p_FIA1eKQQFNRMXxEXEuHDl_DKanO3_4Iqs659gCx0IrOZoxnBDvxk8sHXNO19-gmzAVGgAQp-wERCoW3FP6h21PZwRA99AWSOe2YETc-VL_MtRT".to_string();
+
+        let session = login_server_finish(client_message, state).unwrap();
+
+        println!("{}", session)
+        // example session key 
+        // pzt_-CKrOufYAsdCKzmaMZwQ78ZPLB1zTtffoJswFRoAEKfsBEQqFtxT-odtT2cEQPfQFkjntmBE3PlS_zLUUw
+    }
 }

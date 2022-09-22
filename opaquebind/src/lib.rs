@@ -3,22 +3,16 @@ pub mod client;
 
 use std::fmt::{Debug, Display, Formatter};
 use opaque_ke::ciphersuite::CipherSuite;
-use sha2;
 use base64::DecodeError;
-use digest::Digest;
-use digest::generic_array::GenericArray;
-use digest::generic_array::typenum::Unsigned;
 pub use opaque_ke::errors::{ProtocolError};
-use opaque_ke::hash::Hash;
-use opaque_ke::keypair::KeyPair;
 use opaque_ke::ServerSetup;
 use rand::rngs::OsRng;
 
 pub struct Cipher;
 impl CipherSuite for Cipher {
+    type OprfCs = opaque_ke::Ristretto255;
     type KeGroup = opaque_ke::Ristretto255;
     type KeyExchange = opaque_ke::key_exchange::tripledh::TripleDh;
-    type OprfCs = opaque_ke::Ristretto255;
     type Ksf = argon2::Argon2<'static>;
 }
 

@@ -118,25 +118,22 @@ mod tests {
         println!("{}", response);
         println!("{}", state);
         // example response
-        // cC90jRh3KZlP9XpFn_EhIEkjxAgTQ3szGS1pTxDZhjw
-        // 1nE62MQOsSCan3raiuU8UKuPkmCv41rxb41QrVY6ZFk
+        // 3i3SEzJNZKvsIfADx1lf-zk4SNeitkTp41-kpxWOUxE
         // example state
-        // cC90jRh3KZlP9XpFn_EhIEkjxAgTQ3szGS1pTxDZhjwbFAoFCZImU7iEolxMv8HWukMubkcKehoYPy7fU03TDWNsaWVudGVsZQ
-        // 1nE62MQOsSCan3raiuU8UKuPkmCv41rxb41QrVY6ZFm1jxJmYNUII1EBT1uMkJ4fforeQ0NbxwACX0FS5g56DGNsaWVudGVsZQ
+        // lhGS4SnWizb6BWPxsQfY513RQ8yt_ODBi_pQQP5hygzeLdITMk1kq-wh8APHWV_7OThI16K2ROnjX6SnFY5TEQ
     }
 
     #[test]
     fn client_register_finish_output() {
         // password 'clientele'
-        let state = "1nE62MQOsSCan3raiuU8UKuPkmCv41rxb41QrVY6ZFm1jxJmYNUII1EBT1uMkJ4fforeQ0NbxwACX0FS5g56DGNsaWVudGVsZQ".to_string();
+        let state = "lhGS4SnWizb6BWPxsQfY513RQ8yt_ODBi_pQQP5hygzeLdITMk1kq-wh8APHWV_7OThI16K2ROnjX6SnFY5TEQ".to_string();
         let password = "clientele".to_string();
-        let server_message = "GGnMPMzUGlKDTd0O4Yjw2S3sNrte4a1ybatXCr_-cRvyxVgYqutFLW3oUC5bmAczDl2DMzPRvmukMc-eKmSsZg".to_string();
+        let server_message = "mKbmMmzMVuq9r2yrfWtJXQCYTFVxAD3ZHkPLFhGY-hqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew".to_string();
 
         let response = client_register_finish(&state, &password, &server_message).unwrap();
         println!("{}", response);
         // example response
-        // jjSusq9xeAzi6YYgc35gXEzv4nJipm0KbPogXDIheQkBp0uqgutLRJhfn37_U4aH7LMf8uXYsUK3Id6wh4P_ZDJaBp3SH7r-5_EsbvLaEA--CiAXjmEH7nn3Sl8uhRkW71JuANOjlb5AxbTaZGyzSBZEYdofpumQ7TMIVy7wQQpc--yaP48xGKG0S93fn-0KxImYaXoRZTdJ-TnnDIjxQvo
-        // HokzHOdiLQ2BULIauK38OflkqCKpIPh9gZqCBUGxgTcBP4WnKHuZZWI6BMXPd7hTnOznBrPIKsG4CZFlqeNK6QuCHku1lM4fi8Ep-n8dguVb8dpvU9vVP2w9L6A3RDETmYv6wCdX3PJw7y7WoRafdZ-v2DZGR9D_NvPcKVHcH03KQudID2lnpf00R_M4CtmXXajttWVdd3eh40Xp0YW41n8
+        // wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy
     }
 
     #[test]
@@ -148,24 +145,24 @@ mod tests {
         println!("{}", response);
         println!("{}", state);
         // example response
-        // IBLgmoQ-rRjs9otxi8niNKXwEPnvqjfONz8IA6LzIjnwGqkLclrQy7fGi1doawiamM7ftIZaihkhNVKHeIx4IAAAxEhDt_NBTRwKsZNQ0noZfr5_tbI3ZzZfjf5L-yxv-38
+        // iIx1sW5pj2GlKnb4V1MRrCFmLTkW_hhyXQCGmczMZUJZ50HlQnVjuPyvv6oKpD7d0ZzPDbZcnliqDlN-GHdrwUpAvLRYzwk1earfTNefonfH9faSj7307IMRwrfGyOhZ
         // example state
-        // yZhnv12-ad8_zm3HDzZEh-2wgmNeeSjeSyS0nR2M9QcAYiAS4JqEPq0Y7PaLcYvJ4jSl8BD576o3zjc_CAOi8yI58BqpC3Ja0Mu3xotXaGsImpjO37SGWooZITVSh3iMeCAAAMRIQ7fzQU0cCrGTUNJ6GX6-f7WyN2c2X43-S_ssb_t_AEDnL1GomLyYFaiFJ-ha-68A9I8Lx6XJAdBBiUNfokrmDvAaqQtyWtDLt8aLV2hrCJqYzt-0hlqKGSE1Uod4jHggY2xpZW50ZWxl
+        // TuuU6PmCvQrP6qb4-5a7_bsKc7Jth_Rr6IxImMMmWgOIjHWxbmmPYaUqdvhXUxGsIWYtORb-GHJdAIaZzMxlQlnnQeVCdWO4_K-_qgqkPt3RnM8NtlyeWKoOU34Yd2vBSkC8tFjPCTV5qt9M15-id8f19pKPvfTsgxHCt8bI6FlHWb7wtii5WeSG7D3lKKM5VhExzBReT7223RWU60qeB1nnQeVCdWO4_K-_qgqkPt3RnM8NtlyeWKoOU34Yd2vB
     }
 
     #[test]
     fn client_login_finish_output() {
         // password 'clientele'
-        let state = "yZhnv12-ad8_zm3HDzZEh-2wgmNeeSjeSyS0nR2M9QcAYiAS4JqEPq0Y7PaLcYvJ4jSl8BD576o3zjc_CAOi8yI58BqpC3Ja0Mu3xotXaGsImpjO37SGWooZITVSh3iMeCAAAMRIQ7fzQU0cCrGTUNJ6GX6-f7WyN2c2X43-S_ssb_t_AEDnL1GomLyYFaiFJ-ha-68A9I8Lx6XJAdBBiUNfokrmDvAaqQtyWtDLt8aLV2hrCJqYzt-0hlqKGSE1Uod4jHggY2xpZW50ZWxl".to_string();
+        let state = "TuuU6PmCvQrP6qb4-5a7_bsKc7Jth_Rr6IxImMMmWgOIjHWxbmmPYaUqdvhXUxGsIWYtORb-GHJdAIaZzMxlQlnnQeVCdWO4_K-_qgqkPt3RnM8NtlyeWKoOU34Yd2vBSkC8tFjPCTV5qt9M15-id8f19pKPvfTsgxHCt8bI6FlHWb7wtii5WeSG7D3lKKM5VhExzBReT7223RWU60qeB1nnQeVCdWO4_K-_qgqkPt3RnM8NtlyeWKoOU34Yd2vB".to_string();
         let password = "clientele".to_string();
-        let server_message = "XE2e5baMjY3k342xZ5PgC9pyxOkFdSVlR_0EzzT-k2zyxVgYqutFLW3oUC5bmAczDl2DMzPRvmukMc-eKmSsZgE_hacoe5llYjoExc93uFOc7OcGs8gqwbgJkWWp40rpC4IeS7WUzh-LwSn6fx2C5Vvx2m9T29U_bD0voDdEMROZi_rAJ1fc8nDvLtahFp91n6_YNkZH0P8289wpUdwfTcpC50gPaWel_TRH8zgK2ZddqO21ZV13d6HjRenRhbjWf16FzOJAzS7mEtX0xyNJvjcA4r-MpHt7sA6PXHgZNZhzkHaurq_ZutvRWCWLzGHPjGs5t_nBf4oqIuL_hfQjT0wAAOZYJP4U2mUe3oT-3LXInys1LjAYGX1jvow53a-pJex6jcHOFPwEvOhn3CKXGrHL913o84s07IQNJ0TZ26zzC9M".to_string();
+        let server_message = "1kHXX25U1NE0nki_rL-5KnPRre6-CD2P4ApqhDOXL2m5xgVIT1oO4M5n5r6b2mfGx7Xq4kiMFQH8pfrGLok2H0A20_p30giVapbzQL1QYRiG2jJK2AUlhOK6lTr5YshNJNOqHgn0eGFUWiYwZ606pYfIJDaiUa5p9Mhmb9lWTpzP9akkvjDkbaxViRLB_-T9QZyTjiy-67bkepYWTeCEnqrkdw-_ckKEcBRJrlVX0yMqHtzwMdoMX6LKdT02BCXMde7kdxT5mWUMcMozBg0SLrTAehZiHgqQYq94TAK-lmiePUljPSSHFERFm-0h7r2t2QL-hLi1DmY53upbKvTQFyN-IzuAmK7UsG4MgcYVcGKQXlrF4keZVJaa5dOz5YaFYp1oBXm26hUdtKzXf-9gVTtlDc3ep-G8GNyiDNLiVwU".to_string();
 
         let (response, session_key) = client_login_finish(&state, &password, &server_message).unwrap();
         println!("{}", response);
         println!("{}", session_key);
         // example response
-        // YATUKRGRBXjup27rb8TeoHFw8AlyZ1Kx5FB2oa4HLohCyU-BDaPLWm9CiRRCGHvp-PV9PThsLtjDLJXDEtnoXA
+        // eP_3skqnrkJXs-AZpXqaxihP4EsF1ek8eDxH4ktDflExfEvNF99-oVZ24hkahw05v-rH9B-1WCs91dGteIMH9Q
         // example session key
-        // zySjwa5CpddMzSydqKOvXZHQrtRK-VD83aOPMAB_1gEVxSscBywmS8XxZze3letN9whXUiRfSEfGel9e-5XGgQ
+        // pzt_-CKrOufYAsdCKzmaMZwQ78ZPLB1zTtffoJswFRoAEKfsBEQqFtxT-odtT2cEQPfQFkjntmBE3PlS_zLUUw
     }
 }
