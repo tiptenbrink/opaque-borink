@@ -4,7 +4,7 @@ This library is a counterpart to [opaquepy](https://github.com/tiptenbrink/opaqu
 
 ### Building
 
-`wasm-pack build` to build.
+`wasm-pack build --target bundler` to build.
 
 This generates a `pkg`, which you can `npm publish`. Change the name in `package.json` to `@tiptenbrink/opaquewasm`.
 
