@@ -8,7 +8,7 @@ It uses a basic CipherSuite configured as follows:
 * [sha2](https://github.com/RustCrypto/hashes/tree/master/sha2) Sha512 as Hash
 * [argon2](https://github.com/RustCrypto/password-hashes/tree/master/argon2) default Argon2 as SlowHash
 
-It exposes four functions on the server and client, login finish/start and register finish/start as well as a key generation function.
+It exposes four functions on both the server and client: login finish/start and register finish/start; as well as a key generation function.
 
 `opaquebind` serves as the core library for `opaquepy` and `@tiptenbrink/opaquewasm`, bindings for Python and WebAssembly, respectively.
 
