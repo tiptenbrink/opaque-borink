@@ -4,3 +4,4 @@ Cargo.lock
 **/*.so
 **/*.pyc
 **/__pycache__
+.python-version
