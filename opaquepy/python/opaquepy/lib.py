@@ -37,7 +37,9 @@ def register_client(password: str) -> tuple[str, str]:
     return _opaquepy.register_client_py(password)
 
 
-def register_client_finish(client_register_state: str, password: str, server_message: str) -> str:
+def register_client_finish(
+    client_register_state: str, password: str, server_message: str
+) -> str:
     """
 
     :param client_register_state:
@@ -45,10 +47,14 @@ def register_client_finish(client_register_state: str, password: str, server_mes
     :param server_message:
     :return: Encoded response to the server.
     """
-    return _opaquepy.register_client_finish_py(client_register_state, password, server_message)
+    return _opaquepy.register_client_finish_py(
+        client_register_state, password, server_message
+    )
 
 
-def login(setup: str, password_file: str, client_request: str, credential_id: str) -> tuple[str, str]:
+def login(
+    setup: str, password_file: str, client_request: str, credential_id: str
+) -> tuple[str, str]:
     """
 
     :param setup:
@@ -57,7 +63,9 @@ def login(setup: str, password_file: str, client_request: str, credential_id: st
     :param credential_id:
     :return: Tuple of encoded response to the client and login state to be saved, respectively.
     """
-    return _opaquepy.login_server_py(setup, password_file, client_request, credential_id)
+    return _opaquepy.login_server_py(
+        setup, password_file, client_request, credential_id
+    )
 
 
 def login_finish(client_request_finish: str, login_state: str) -> str:
