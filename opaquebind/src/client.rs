@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn client_login_output() {
         // password 'clientele'
-        let password = "clientele".to_string();
+        let password = "abcd".to_string();
 
         let (response, state) = client_login(&password).unwrap();
         println!("{}", response);

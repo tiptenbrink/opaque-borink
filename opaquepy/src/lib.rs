@@ -1,6 +1,6 @@
 use opaquebind::{Error, create_setup};
 use opaquebind::server::{register_server, register_server_finish, login_server, login_server_finish};
-use opaquebind::client::{client_register, client_register_finish};
+use opaquebind::client::{client_register, client_register_finish, client_login, client_login_finish};
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 
@@ -32,6 +32,8 @@ fn _opaquepy(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(register_client_finish_py, m)?)?;
     m.add_function(wrap_pyfunction!(login_server_py, m)?)?;
     m.add_function(wrap_pyfunction!(login_server_finish_py, m)?)?;
+    m.add_function(wrap_pyfunction!(login_client_py, m)?)?;
+    m.add_function(wrap_pyfunction!(login_client_finish_py, m)?)?;
 
     Ok(())
 }
@@ -69,4 +71,14 @@ fn login_server_py(setup: String, password_file: String, client_request: String,
 #[pyfunction]
 fn login_server_finish_py(client_request_finish: String, login_state: String) -> OpaquePyResult<String> {
     Ok(login_server_finish(client_request_finish, login_state)?)
+}
+
+#[pyfunction]
+fn login_client_py(password: String) -> OpaquePyResult<(String, String)> {
+    Ok(client_login(&password)?)
+}
+
+#[pyfunction]
+fn login_client_finish_py(client_login_state: String, password: String, server_message: String) -> OpaquePyResult<(String, String)> {
+    Ok(client_login_finish(&client_login_state, &password, &server_message)?)
 }
