@@ -1,6 +1,6 @@
 [package]
 name = "opaquebind"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 license = "Apache-2.0"
@@ -13,10 +13,8 @@ description = "Simple interface to opaque-ke and core library for Python and WAS
 name = "opaquebind"
 
 [dependencies]
-opaque-ke = { version = "1.2.0", features = ["slow-hash"] }
-curve25519-dalek = { version = "3", default-features = false }
-sha2 = "0.9"
-rand = { version = "0.8", default-features = false, features = ["getrandom"] }
-digest = "0.9"
+opaque-ke = { version = "2.0.0", features = ["argon2"] }
+sha2 = "0.10.6"
+rand = { version = "0.8.5", default-features = false, features = ["getrandom"] }
 base64 = "0.13.0"
-argon2 = "0.3"
+argon2 = "0.4.1"

@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use wasm_bindgen::prelude::*;
 use opaquebind::client::{client_register, client_register_finish, client_login, client_login_finish};
-use opaquebind::{Error, PakeError, ProtocolError};
+use opaquebind::{Error, ProtocolError};
 
 pub type OpaqueJsResult<T> = Result<T, JsValue>;
 
@@ -33,14 +33,7 @@ impl From<OpaqueJsError> for JsValue {
         let info = "default error";
         match e.0 {
             Error::ProtocolError(oe) => match oe {
-                ProtocolError::VerificationError(pe) => {
-                    let err = Error::PakeError(pe);
-                    JsValue::from(OpaqueJsError::from(err))
-                },
-                _ => make_js_val(oe, info)
-            }
-            Error::PakeError(oe) => match oe {
-                PakeError::InvalidLoginError => invalid_login(info),
+                ProtocolError::InvalidLoginError => invalid_login(info),
                 _ => make_js_val(oe, info)
             },
             Error::DecodeError(oe) => JsValue::from(format!("{} {}", oe, info)),
@@ -104,8 +97,8 @@ pub fn client_register_wasm(password: &str) -> OpaqueJsResult<MessageState> {
 }
 
 #[wasm_bindgen]
-pub fn client_register_finish_wasm(client_register_state: &str, server_message: &str) -> OpaqueJsResult<String> {
-    Ok(client_register_finish(client_register_state, server_message)
+pub fn client_register_finish_wasm(client_register_state: &str, password: &str, server_message: &str) -> OpaqueJsResult<String> {
+    Ok(client_register_finish(client_register_state, password, server_message)
         .map_err(|e| OpaqueJsError(e))?)
 }
 
@@ -116,7 +109,7 @@ pub fn client_login_wasm(password: &str) -> OpaqueJsResult<MessageState> {
 }
 
 #[wasm_bindgen]
-pub fn client_login_finish_wasm(client_login_state: &str, server_message: &str) -> OpaqueJsResult<MessageSession> {
-    Ok(client_login_finish(client_login_state, server_message).and_then(|(message, session)| Ok(MessageSession { message, session }))
+pub fn client_login_finish_wasm(client_login_state: &str, password: &str, server_message: &str) -> OpaqueJsResult<MessageSession> {
+    Ok(client_login_finish(client_login_state, password, server_message).and_then(|(message, session)| Ok(MessageSession { message, session }))
         .map_err(|e| OpaqueJsError(e))?)
 }
