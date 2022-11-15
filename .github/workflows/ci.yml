@@ -156,7 +156,7 @@ jobs:
 
         # Installing poetry requires a different command on Windows than on macOS/Linux
         - name: Poetry
-          run: (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+          run: (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 
         # PATH is also different
         - name: Poetry path
