@@ -10,10 +10,46 @@ on:
 
 jobs:
   # Build for manylinux, which allows it to be run on many different Linux platforms
-  test-linux:
+  test-mac:
+    runs-on: macos-11
     strategy:
       matrix:
-        py-version: ['3.9', '3.10']
+        # If we run it without this argument, it will generate only x86_64 wheels, which are compatible with more
+        # macOS and pip versions. Universal2 wheels are compatible with Apple Silicon (aarch64) Macs but also updated
+        # x86_64 Macs. In the future only universal2 wheels will be necessary.
+        target: [ '--universal2', '' ]
+        py-version: [ '3.10', '3.11' ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.py-version }}
+
+      # The x86_64 Rust toolchain is installed on GitHub runners, but since we compile also for Apple Silicon, we also
+      # need the correct Rust toolchain.
+      - name: Rustup install aarch64 target
+        run: rustup target add aarch64-apple-darwin
+        if: ${{ matrix.target == '--universal2' }}
+
+      # We install poetry as a dependency manager to read the pyproject.toml of our package.
+      - name: Poetry
+        run: curl -sSL https://install.python-poetry.org | POETRY_HOME=$HOME/poetry python -
+
+      # GitHub has modified PATH behavior, so we use the below command to add poetry to our PATH
+      - name: Add poetry path
+        run: echo "$HOME/poetry/bin" >> $GITHUB_PATH
+
+      # poetry update will install all dependencies for our package, as well as maturin, which we use as our build
+      # back-end
+      - name: Poetry update
+        run: poetry update
+        working-directory: ${{ github.workspace }}/opaquepy
+
+  test-linux:
+    if: ${{ false }}
+    strategy:
+      matrix:
+        py-version: ['3.9', '3.10', '3.11']
     runs-on: ubuntu-latest
     steps:
     - name: Checkout opaquepy
@@ -22,12 +58,6 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.py-version }}
-
-    - name: Load cached Poetry installation
-      uses: actions/cache@v3
-      with:
-        path: ~/.local
-        key: poetry-${{ matrix.py-version }}
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
@@ -35,16 +65,7 @@ jobs:
         # .venv is created in project
         virtualenvs-in-project: true
         installer-parallel: true
-    # Load .venv directly from cache
-    - name: Load cached venv
-      id: cached-poetry-dependencies
-      uses: actions/cache@v3
-      with:
-        path: opaquepy/.venv
-        # Key only changes if poetry.lock changes
-        key: venv-${{ runner.os }}-${{ matrix.py-version }}-${{ hashFiles('**/poetry.lock') }}
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
       working-directory: ${{ github.workspace }}/opaquepy
     - name: Install library
@@ -58,9 +79,9 @@ jobs:
 #      run: cargo test
 #      working-directory: ${{ github.workspace }}
 #
-#    - name: poetry pytest
-#      run: poetry run pytest
-#      working-directory: ${{ github.workspace }}
+    - name: poetry pytest
+      run: poetry run pytest
+      working-directory: ${{ github.workspace }}/opaquepy
   build-manylinux:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
     needs: [test-linux]
@@ -74,6 +95,8 @@ jobs:
             py-pep-425: 'cp39-cp39'
           - py-version: '3.10'
             py-pep-425: 'cp310-cp310'
+          - py-version: '3.11'
+            py-pep-425: 'cp311-cp311'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout opaquepy
@@ -106,7 +129,7 @@ jobs:
         # macOS and pip versions. Universal2 wheels are compatible with Apple Silicon (aarch64) Macs but also updated
         # x86_64 Macs. In the future only universal2 wheels will be necessary.
         target: ['--universal2', '']
-        py-version: ['3.9', '3.10']
+        py-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -161,7 +184,7 @@ jobs:
       runs-on: windows-latest
       strategy:
         matrix:
-          py-version: ['3.9', '3.10']
+          py-version: ['3.9', '3.10', '3.11']
       steps:
         - uses: actions/checkout@v3
         - uses: actions/setup-python@v4
