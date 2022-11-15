@@ -43,9 +43,9 @@ jobs:
 #      run: cargo test
 #      working-directory: ${{ github.workspace }}
 #
-#    - name: poetry pytest
-#      run: poetry run pytest
-#      working-directory: ${{ github.workspace }}
+    - name: poetry pytest
+      run: poetry run pytest
+      working-directory: ${{ github.workspace }}/opaquepy
   build-manylinux:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
     needs: [test-linux]
