@@ -31,6 +31,7 @@ jobs:
 
       - name: Poetry update
         run: |
+          poetry env use python
           poetry update
         working-directory: ${{ github.workspace }}/opaquepy
 
@@ -221,7 +222,7 @@ jobs:
 
         # Installing poetry requires a different command on Windows than on macOS/Linux
         - name: Poetry
-          run: (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+          run: (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
 
         # PATH is also different
         - name: Poetry path
@@ -229,7 +230,6 @@ jobs:
 
         - name: Poetry update
           run: |
-            poetry env use ${{ matrix.py-version }}
             poetry update
           working-directory: ${{ github.workspace }}/opaquepy
 
