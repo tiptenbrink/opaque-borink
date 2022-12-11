@@ -165,6 +165,7 @@ jobs:
 
         - name: Poetry update
           run: |
+            poetry env use ${{ matrix.py-version }}
             poetry update
           working-directory: ${{ github.workspace }}/opaquepy
 
