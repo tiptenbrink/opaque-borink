@@ -171,13 +171,12 @@ jobs:
         run: rustup target add aarch64-apple-darwin
         if: ${{ matrix.target == '--universal2' }}
 
-      # We install poetry as a dependency manager to read the pyproject.toml of our package.
       - name: Poetry
-        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+        run: curl -sSL https://install.python-poetry.org | POETRY_HOME=$HOME/poetry python -
 
       # GitHub has modified PATH behavior, so we use the below command to add poetry to our PATH
       - name: Add poetry path
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+        run: echo "$HOME/poetry/bin" >> $GITHUB_PATH
 
       # poetry update will install all dependencies for our package, as well as maturin, which we use as our build
       # back-end
@@ -208,8 +207,8 @@ jobs:
           path: ${{ github.workspace }}/opaquepy/wheelhouse
 
   build-windows:
-      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-      needs: [test-linux]
+      # if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+      # needs: [test-linux]
       runs-on: windows-latest
       strategy:
         matrix:
@@ -222,7 +221,7 @@ jobs:
 
         # Installing poetry requires a different command on Windows than on macOS/Linux
         - name: Poetry
-          run: (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | python -
+          run: (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 
         # PATH is also different
         - name: Poetry path
@@ -230,6 +229,7 @@ jobs:
 
         - name: Poetry update
           run: |
+            poetry env use ${{ matrix.py-version }}
             poetry update
           working-directory: ${{ github.workspace }}/opaquepy
 
