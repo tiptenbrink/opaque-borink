@@ -11,7 +11,6 @@ on:
 jobs:
   # Build for manylinux, which allows it to be run on many different Linux platforms
   test-linux:
-    if: ${{ false }}
     strategy:
       matrix:
         py-version: ['3.9', '3.10', '3.11']
@@ -143,8 +142,8 @@ jobs:
           path: ${{ github.workspace }}/opaquepy/wheelhouse
 
   build-windows:
-      # if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-      # needs: [test-linux]
+      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+      needs: [test-linux]
       runs-on: windows-latest
       strategy:
         matrix:
@@ -165,7 +164,7 @@ jobs:
 
         - name: Poetry update
           run: |
-            poetry env use ${{ matrix.py-version }}
+            poetry env use python
             poetry update
           working-directory: ${{ github.workspace }}/opaquepy
 
