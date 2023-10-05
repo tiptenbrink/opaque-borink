@@ -114,7 +114,7 @@ jobs:
           target: x86_64
           manylinux: auto
           args: --release --out dist -i ${{ matrix.py-version }}
-          working-directory: ${{ github.workspace }}/opaquepy
+          working-directory: opaquepy
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
