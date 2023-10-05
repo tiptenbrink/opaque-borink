@@ -64,12 +64,12 @@ jobs:
         with:
           target: universal2-apple-darwin
           args: --release --out dist -i ${{ matrix.py-version }}
-          working-directory: ${{ github.repository }}/opaquepy
+          working-directory: ${{ github.workspace }}/opaquepy
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: ${{ github.repository }}/opaquepy/dist
+          path: ${{ github.workspace }}/opaquepy/dist
 
   build-windows:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
@@ -88,12 +88,12 @@ jobs:
         with:
           target: x64
           args: --release --out dist -i ${{ matrix.py-version }}
-          working-directory: ${{ github.repository }}/opaquepy
+          working-directory: ${{ github.workspace }}/opaquepy
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: ${{ github.repository }}/opaquepy/dist
+          path: ${{ github.workspace }}/opaquepy/dist
 
   build-linux:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
@@ -114,12 +114,12 @@ jobs:
           target: x86_64
           manylinux: auto
           args: --release --out dist -i ${{ matrix.py-version }}
-          working-directory: ${{ github.repository }}/opaquepy
+          working-directory: ${{ github.workspace }}/opaquepy
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: ${{ github.repository }}/opaquepy/dist
+          path: ${{ github.workspace }}/opaquepy/dist
 
   release:
     name: Release
