@@ -125,7 +125,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [ build-macos, build-windows, build-linux, linux-cross ]
+    needs: [ build-macos, build-windows, build-linux ]
     steps:
       - uses: actions/download-artifact@v3
         with:
