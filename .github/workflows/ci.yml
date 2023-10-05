@@ -10,76 +10,10 @@ on:
 
 jobs:
   # Build for manylinux, which allows it to be run on many different Linux platforms
-  test-windows:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        py-version: [ '3.9', '3.10', '3.11' ]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.py-version }}
-
-      # Installing poetry requires a different command on Windows than on macOS/Linux
-      - name: Poetry
-        run: (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | py -
-
-      # PATH is also different
-      - name: Poetry path
-        run: echo "$env:APPDATA\Python\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-      - name: Poetry update
-        run: |
-          poetry env use python
-          poetry update
-        working-directory: ${{ github.workspace }}/opaquepy
-
-      - name: maturin build release
-        run: poetry run maturin build --release -i python
-        working-directory: ${{ github.workspace }}/opaquepy
-
-  test-mac:
-    if: ${{ false }}
-    runs-on: macos-11
-    strategy:
-      matrix:
-        # If we run it without this argument, it will generate only x86_64 wheels, which are compatible with more
-        # macOS and pip versions. Universal2 wheels are compatible with Apple Silicon (aarch64) Macs but also updated
-        # x86_64 Macs. In the future only universal2 wheels will be necessary.
-        target: [ '--universal2', '' ]
-        py-version: [ '3.10', '3.11' ]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.py-version }}
-
-      # The x86_64 Rust toolchain is installed on GitHub runners, but since we compile also for Apple Silicon, we also
-      # need the correct Rust toolchain.
-      - name: Rustup install aarch64 target
-        run: rustup target add aarch64-apple-darwin
-        if: ${{ matrix.target == '--universal2' }}
-
-      # We install poetry as a dependency manager to read the pyproject.toml of our package.
-      - name: Poetry
-        run: curl -sSL https://install.python-poetry.org | POETRY_HOME=$HOME/poetry python -
-
-      # GitHub has modified PATH behavior, so we use the below command to add poetry to our PATH
-      - name: Add poetry path
-        run: echo "$HOME/poetry/bin" >> $GITHUB_PATH
-
-      # poetry update will install all dependencies for our package, as well as maturin, which we use as our build
-      # back-end
-      - name: Poetry update
-        run: poetry update
-        working-directory: ${{ github.workspace }}/opaquepy
-
   test-linux:
-    if: ${{ false }}
     strategy:
       matrix:
-        py-version: ['3.9', '3.10', '3.11']
+        py-version: ['3.9', '3.10', '3.11', '3.12']
     runs-on: ubuntu-latest
     steps:
     - name: Checkout opaquepy
@@ -127,6 +61,8 @@ jobs:
             py-pep-425: 'cp310-cp310'
           - py-version: '3.11'
             py-pep-425: 'cp311-cp311'
+          - py-version: '3.12'
+            py-pep-425: 'cp312-cp312'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout opaquepy
@@ -149,118 +85,95 @@ jobs:
         name: wheels
         path: ${{ github.repository }}/opaquepy/dist
 
-  build-mac:
+  build-macos:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-    needs: [test-linux]
-    runs-on: macos-11
+    needs: [ test-linux ]
+    runs-on: macos-latest
     strategy:
       matrix:
-        # If we run it without this argument, it will generate only x86_64 wheels, which are compatible with more
-        # macOS and pip versions. Universal2 wheels are compatible with Apple Silicon (aarch64) Macs but also updated
-        # x86_64 Macs. In the future only universal2 wheels will be necessary.
-        target: ['--universal2', '']
-        py-version: ['3.9', '3.10', '3.11']
+        py-version: [ '3.9', '3.10', '3.11', '3.12' ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.py-version }}
-
       # The x86_64 Rust toolchain is installed on GitHub runners, but since we compile also for Apple Silicon, we also
       # need the correct Rust toolchain.
       - name: Rustup install aarch64 target
         run: rustup target add aarch64-apple-darwin
         if: ${{ matrix.target == '--universal2' }}
-
-      - name: Poetry
-        run: curl -sSL https://install.python-poetry.org | POETRY_HOME=$HOME/poetry python -
-
-      # GitHub has modified PATH behavior, so we use the below command to add poetry to our PATH
-      - name: Add poetry path
-        run: echo "$HOME/poetry/bin" >> $GITHUB_PATH
-
-      # poetry update will install all dependencies for our package, as well as maturin, which we use as our build
-      # back-end
-      - name: Poetry update
-        run: poetry update
-        working-directory: ${{ github.workspace }}/opaquepy
-
-      # delocate is the macOS version of auditwheel.
-      - name: Install delocate
-        run: pip install delocate
-        working-directory: ${{ github.workspace }}/opaquepy
-
-      # This command will actually compile the wheels. We use --release to make sure Rust properly optimizes the code.
-      # The ${{ matrix.target }} indicates whether we are building universal 2 wheels. Finally using -i python ensures
-      # only the Python we set up above will be used as target.
-      - name: maturin build release
-        run: poetry run maturin build --release ${{ matrix.target }} -i python
-        working-directory: ${{ github.workspace }}/opaquepy
-
-      # We now fix the wheels using delocate
-      - name: delocate fix wheels
-        run: find . -name "*.whl" -exec delocate-wheel -w wheelhouse --require-archs=universal2 {} \;
-        working-directory: ${{ github.workspace }}/opaquepy
-
-      - uses: actions/upload-artifact@v2
+      - name: Build wheels - universal2
+        uses: PyO3/maturin-action@v1
+        with:
+          target: universal2-apple-darwin
+          args: --release --out dist -i ${{ matrix.py-version }}
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: ${{ github.workspace }}/opaquepy/wheelhouse
+          path: ${{ github.repository }}/opaquepy/dist
 
   build-windows:
-      # if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-      # needs: [test-linux]
-      runs-on: windows-latest
-      strategy:
-        matrix:
-          py-version: ['3.9', '3.10', '3.11']
-      steps:
-        - uses: actions/checkout@v3
-        - uses: actions/setup-python@v4
-          with:
-            python-version: ${{ matrix.py-version }}
+    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+    needs: [ test-linux ]
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        py-version: ['3.9', '3.10', '3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.py-version }}
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: x64
+          args: --release --out dist -i ${{ matrix.py-version }}
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: dist
 
-        # Installing poetry requires a different command on Windows than on macOS/Linux
-        - name: Poetry
-          run: (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+  build-linux:
+    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+    needs: [ test-linux ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        py-version: [ '3.9', '3.10', '3.11', '3.12' ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.py-version }}
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          rust-toolchain: stable
+          target: x86_64
+          manylinux: auto
+          args: --release --out dist -i ${{ matrix.py-version }}
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: ${{ github.repository }}/opaquepy/dist
 
-        # PATH is also different
-        - name: Poetry path
-          run: echo "$env:APPDATA\Python\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-        - name: Poetry update
-          run: |
-            poetry update
-          working-directory: ${{ github.workspace }}/opaquepy
-
-        - name: maturin build release
-          run: poetry run maturin build --release -i python
-          working-directory: ${{ github.workspace }}/opaquepy
-
-        - uses: actions/upload-artifact@v2
-          with:
-            name: wheels
-            path: ${{ github.workspace }}/opaquepy/target/wheels
-
-  wheel-publish:
-      needs: [build-manylinux, build-mac, build-windows]
-      runs-on: ubuntu-latest
-      steps:
-        - name: Download artifact
-          uses: actions/download-artifact@v2
-          with:
-            name: wheels
-            path: ${{ github.workspace }}/dist/
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.9'
-        - name: Install wheel test
-          run: |
-            pip install ${{ github.workspace }}/dist/*39*manylinux*.whl
-        - name: Publish a Python distribution to PyPI
-          if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-          uses: pypa/gh-action-pypi-publish@release/v1
-          with:
-            user: __token__
-            password: ${{ secrets.PYPI_TOKEN }}
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs: [ build-macos, build-windows, build-linux, linux-cross ]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: wheels
+      - name: Publish to PyPI
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        uses: PyO3/maturin-action@v1
+        with:
+          command: upload
+          args: --skip-existing *
