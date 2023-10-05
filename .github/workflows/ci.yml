@@ -38,52 +38,9 @@ jobs:
     - name: maturin develop
       run: poetry run maturin develop
       working-directory: ${{ github.workspace }}/opaquepy
-
-#    - name: cargo test
-#      run: cargo test
-#      working-directory: ${{ github.workspace }}
-#
     - name: poetry pytest
       run: poetry run pytest
       working-directory: ${{ github.workspace }}/opaquepy
-  build-manylinux:
-    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-    needs: [test-linux]
-    strategy:
-      # Let individual matrix jobs go if one fails
-      matrix:
-        include:
-          # We are compatible with 3.9, 3.10. The 'cp37-cp37m' is the PEP 425 tag of that specific
-          # Python version, which is where the Python interpreters of the manylinux Docker container are located.
-          - py-version: '3.9'
-            py-pep-425: 'cp39-cp39'
-          - py-version: '3.10'
-            py-pep-425: 'cp310-cp310'
-          - py-version: '3.11'
-            py-pep-425: 'cp311-cp311'
-          - py-version: '3.12'
-            py-pep-425: 'cp312-cp312'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout opaquepy
-      uses: actions/checkout@v3
-      with:
-        path: ${{ github.repository }}
-    # Set up the repository with the Docker container action, which will allow us to build and run a manylinux Docker
-    # container that will ensure compatibility. See the action repository for more info.
-    - name: maturin-manylinux-wheels-action
-      uses: tmtenbrink/maturin-manylinux-wheels-action@v1.0.1
-      with:
-        py-version: "python${{ matrix.py-version }}"
-        py-pep-425: ${{ matrix.py-pep-425 }}
-        package-path: ${{ github.repository }}/opaquepy
-    # Set up the package repository in a sub-path, so it doesn't overwrite the Docker container action repo
-
-    # It now uploads all the wheel files to an artifact that we can later retrieve
-    - uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: ${{ github.repository }}/opaquepy/dist
 
   build-macos:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
@@ -107,6 +64,7 @@ jobs:
         with:
           target: universal2-apple-darwin
           args: --release --out dist -i ${{ matrix.py-version }}
+          working-directory: ${{ github.repository }}/opaquepy
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
@@ -130,11 +88,12 @@ jobs:
         with:
           target: x64
           args: --release --out dist -i ${{ matrix.py-version }}
+          working-directory: ${{ github.repository }}/opaquepy
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: dist
+          path: ${{ github.repository }}/opaquepy/dist
 
   build-linux:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
@@ -155,6 +114,7 @@ jobs:
           target: x86_64
           manylinux: auto
           args: --release --out dist -i ${{ matrix.py-version }}
+          working-directory: ${{ github.repository }}/opaquepy
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
