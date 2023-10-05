@@ -1,4 +1,4 @@
-use base64;
+use base64::{Engine as _, engine::general_purpose as b64};
 use opaque_ke::{CredentialFinalization, CredentialRequest, RegistrationRequest, RegistrationUpload, ServerLogin, ServerLoginFinishResult, ServerLoginStartParameters, ServerLoginStartResult, ServerRegistration, ServerRegistrationStartResult, ServerSetup};
 use opaque_ke::errors::ProtocolError;
 use rand::rngs::OsRng;
@@ -7,8 +7,8 @@ use crate::Cipher;
 use crate::Error;
 
 pub fn register_server(server_setup: String, client_request: String, credential_id: String) -> Result<String, Error> {
-    let setup_bytes = base64::decode_config(server_setup, base64::URL_SAFE_NO_PAD)?;
-    let request_bytes = base64::decode_config(client_request, base64::URL_SAFE_NO_PAD)?;
+    let setup_bytes = b64::URL_SAFE_NO_PAD.decode(server_setup)?;
+    let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request)?;
     let credential_bytes = credential_id.as_bytes();
     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
     let client_request: RegistrationRequest<Cipher> = RegistrationRequest::deserialize(&request_bytes)?;
@@ -16,27 +16,27 @@ pub fn register_server(server_setup: String, client_request: String, credential_
     let s = opaque_server_register(setup, client_request, credential_bytes)?;
 
     let response_bytes = s.message.serialize();
-    let response_encoded = base64::encode_config(response_bytes, base64::URL_SAFE_NO_PAD);
+    let response_encoded = b64::URL_SAFE_NO_PAD.encode(response_bytes);
 
     Ok(response_encoded)
 }
 
 pub fn register_server_finish(client_request_finish: String) -> Result<String, Error> {
-    let request_bytes = base64::decode_config(client_request_finish, base64::URL_SAFE_NO_PAD)?;
+    let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request_finish)?;
     let client_request_finish: RegistrationUpload<Cipher> = RegistrationUpload::deserialize(&request_bytes)?;
 
     let s = opaque_server_register_finish(client_request_finish)?;
 
     let password_file_bytes = s.serialize();
-    let password_file_encoded = base64::encode_config(password_file_bytes, base64::URL_SAFE_NO_PAD);
+    let password_file_encoded = b64::URL_SAFE_NO_PAD.encode(password_file_bytes);
 
     Ok(password_file_encoded)
 }
 
 pub fn login_server(server_setup: String, password_file: String, client_request: String, credential_id: String) -> Result<(String, String), Error> {
-    let password_file_bytes = base64::decode_config(password_file, base64::URL_SAFE_NO_PAD)?;
-    let setup_bytes = base64::decode_config(server_setup, base64::URL_SAFE_NO_PAD)?;
-    let request_bytes = base64::decode_config(client_request, base64::URL_SAFE_NO_PAD)?;
+    let password_file_bytes = b64::URL_SAFE_NO_PAD.decode(password_file)?;
+    let setup_bytes = b64::URL_SAFE_NO_PAD.decode(server_setup)?;
+    let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request)?;
     let credential_bytes = credential_id.as_bytes();
     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
     let password_file= ServerRegistration::<Cipher>::deserialize(&password_file_bytes)?;
@@ -47,22 +47,22 @@ pub fn login_server(server_setup: String, password_file: String, client_request:
     let response_bytes = s.message.serialize();
     let state_bytes = s.state.serialize();
 
-    let response_encoded = base64::encode_config(response_bytes, base64::URL_SAFE_NO_PAD);
-    let state_encoded = base64::encode_config(state_bytes, base64::URL_SAFE_NO_PAD);
+    let response_encoded = b64::URL_SAFE_NO_PAD.encode(response_bytes);
+    let state_encoded = b64::URL_SAFE_NO_PAD.encode(state_bytes);
 
     Ok((response_encoded, state_encoded))
 }
 
 pub fn login_server_finish(client_request_finish: String, login_state: String) -> Result<String, Error> {
-    let request_bytes = base64::decode_config(client_request_finish, base64::URL_SAFE_NO_PAD)?;
-    let state_bytes = base64::decode_config(login_state, base64::URL_SAFE_NO_PAD)?;
+    let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request_finish)?;
+    let state_bytes = b64::URL_SAFE_NO_PAD.decode(login_state)?;
     let client_request_finish = Box::new(CredentialFinalization::<Cipher>::deserialize(&request_bytes)?);
     let login_state = Box::new(ServerLogin::<Cipher>::deserialize(&state_bytes)?);
 
     let s = opaque_server_login_finish(client_request_finish, login_state)?;
 
     let session_key_bytes = s.session_key;
-    let session_key_encoded = base64::encode_config(session_key_bytes, base64::URL_SAFE_NO_PAD);
+    let session_key_encoded = b64::URL_SAFE_NO_PAD.encode(session_key_bytes);
 
     Ok(session_key_encoded)
 }

@@ -3,6 +3,7 @@ pub mod client;
 
 use std::fmt::{Debug, Display, Formatter};
 use opaque_ke::ciphersuite::CipherSuite;
+use base64::{Engine as _, engine::general_purpose as b64};
 use base64::DecodeError;
 pub use opaque_ke::errors::{ProtocolError};
 use opaque_ke::ServerSetup;
@@ -47,7 +48,7 @@ pub fn create_setup() -> String {
     let server_setup = ServerSetup::<Cipher>::new(&mut rng);
     let server_setup_serialized= ServerSetup::serialize(&server_setup);
 
-    base64::encode_config(server_setup_serialized, base64::URL_SAFE_NO_PAD)
+    b64::URL_SAFE_NO_PAD.encode(server_setup_serialized)
 }
 
 #[cfg(test)]
