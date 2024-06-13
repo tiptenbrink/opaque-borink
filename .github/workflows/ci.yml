@@ -35,9 +35,11 @@ jobs:
     - name: Install library
       run: poetry install --no-interaction
       working-directory: ${{ github.workspace }}/opaquepy
-    - name: maturin develop
-      run: poetry run maturin develop
-      working-directory: ${{ github.workspace }}/opaquepy
+    - name: Maturin develop
+      uses: PyO3/maturin-action@v1
+      with:
+        command: develop
+        working-directory: ${{ github.workspace }}/opaquepy
     - name: poetry pytest
       run: poetry run pytest
       working-directory: ${{ github.workspace }}/opaquepy
