@@ -1,3 +1,5 @@
+This crate was originally named `opaquebind`, but has been renamed to [`opaque-borink`](https://github.com/tiptenbrink/opaque-borink). The last version named `opaquebind` can be found found [here](https://github.com/tiptenbrink/opaque-borink/tree/v0.3.6/opaquebind).
+
 A simple configuration of the [opaque-ke](https://github.com/novifinancial/opaque-ke) OPAQUE implementation, using a base64url-encoded format to serialize and deserialize the Rust structs. 
 
 OPAQUE ([see the Internet-Draft](https://datatracker.ietf.org/doc/html/draft-krawczyk-cfrg-opaque-06)) is an upcoming standard for password authentication. It is more secure than a traditional simple salt and password hash scheme.
