@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "opaquewasm": "file:../pkg",
+    "@tiptenbrink/opaquewasm": "0.3.7",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
-    "vite-plugin-wasm": "^3.3.0",
     "vite-plugin-wasm-esm": "1.0.1"
   }
 }

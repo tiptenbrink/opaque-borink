@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@tiptenbrink/opaquewasm':
+        specifier: 0.3.7
+        version: 0.3.7
       opaquewasm:
         specifier: file:../pkg
         version: file:../pkg
@@ -17,11 +20,8 @@ importers:
       vite:
         specifier: ^5.2.0
         version: 5.3.0
-      vite-plugin-wasm:
-        specifier: ^3.3.0
-        version: 3.3.0(vite@5.3.0)
       vite-plugin-wasm-esm:
-        specifier: ^1.0.1
+        specifier: 1.0.1
         version: 1.0.1(vite@5.3.0)
 
 packages:
@@ -244,6 +244,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@tiptenbrink/opaquewasm@0.3.7':
+    resolution: {integrity: sha512-V9XbWxPz6tOEqIPvbcgy8o9DcBEV2V5nnFquAiG+AkKkKRLCZMZrf6bwSvtvekY7YjObPdr5J0+tYqassZqGog==}
+
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
@@ -290,11 +293,6 @@ packages:
     resolution: {integrity: sha512-Lbc1SNzePrnWiQUa12Jv+BE9AWwMqxTkyYVdC+j9WrnPMFhnwcRGr2mTB/Law07dfl578+0Bu46vh0aVbRsA7Q==}
     peerDependencies:
       vite: 3.x || 4.x || 5.x
-
-  vite-plugin-wasm@3.3.0:
-    resolution: {integrity: sha512-tVhz6w+W9MVsOCHzxo6SSMSswCeIw4HTrXEi6qL3IRzATl83jl09JVO1djBqPSwfjgnpVHNLYcaMbaDX5WB/pg==}
-    peerDependencies:
-      vite: ^2 || ^3 || ^4 || ^5
 
   vite@5.3.0:
     resolution: {integrity: sha512-hA6vAVK977NyW1Qw+fLvqSo7xDPej7von7C3DwwqPRmnnnK36XEBC/J3j1V5lP8fbt7y0TgTKJbpNGSwM+Bdeg==}
@@ -443,6 +441,8 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.18.0':
     optional: true
 
+  '@tiptenbrink/opaquewasm@0.3.7': {}
+
   '@types/estree@1.0.5': {}
 
   esbuild@0.21.5:
@@ -513,10 +513,6 @@ snapshots:
   typescript@5.4.5: {}
 
   vite-plugin-wasm-esm@1.0.1(vite@5.3.0):
-    dependencies:
-      vite: 5.3.0
-
-  vite-plugin-wasm@3.3.0(vite@5.3.0):
     dependencies:
       vite: 5.3.0
 

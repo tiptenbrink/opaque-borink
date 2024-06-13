@@ -6,10 +6,10 @@ This library is a counterpart to [opaquepy](https://github.com/tiptenbrink/tree/
 
 `wasm-pack build --target web` to build.
 
-This generates a `pkg`, which you can `npm publish`. Change the name in `package.json` to `@tiptenbrink/opaquewasm`.
+This generates a `pkg`, which you can `npm publish`. Change the name in `package.json` to `@tiptenbrink/opaquewasm` before you upload.
 
 To test it out in a browser:
 
-- Run `npm install` inside the `/vite` folder.
+- Run `npm install` inside the `/vite` folder. Make sure the dependency name in `package.json` is the same as the name in `/pkg`.
 - Run `npm run dev` inside the `/vite` folder.
 - Navigate the the localhost webpage. If you press the button it should generate a message without errors each time.

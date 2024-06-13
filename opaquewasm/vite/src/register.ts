@@ -1,4 +1,5 @@
 import { client_register_wasm } from 'opaquewasm';
+//import { client_register_wasm } from '@tiptenbrink/opaquewasm';
 
 function regStart(password: string) {
   const { message, state } = client_register_wasm(password)
