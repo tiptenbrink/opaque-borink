@@ -1,10 +1,11 @@
+from typing import Generator
 import pytest
 
 from opaquepy import *
 
 
 @pytest.fixture(scope="module")
-def server_setup() -> str:
+def server_setup() -> Generator[None, None, str]:
     yield create_setup()
 
 
@@ -16,7 +17,7 @@ password = "pass"
 
 
 @pytest.fixture(scope="module")
-def client_registration() -> tuple[str]:
+def client_registration() -> Generator[None, None, tuple[str]]:
     response, client_state = register_client(password)
     yield response, client_state
 

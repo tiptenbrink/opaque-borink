@@ -1,4 +1,4 @@
-from opaquepy import _opaquepy
+from .opaquepy import _internal
 
 
 def create_setup() -> str:
@@ -7,7 +7,7 @@ def create_setup() -> str:
 
     :return: Encoded server setup state.
     """
-    return _opaquepy.create_setup_py()
+    return _internal.create_setup_py()
 
 
 def register(setup: str, client_request: str, credential_id: str) -> str:
@@ -19,7 +19,7 @@ def register(setup: str, client_request: str, credential_id: str) -> str:
     :param credential_id:
     :return: Encoded response to the client.
     """
-    return _opaquepy.register_server_py(setup, client_request, credential_id)
+    return _internal.register_server_py(setup, client_request, credential_id)
 
 
 def register_finish(client_request_finish: str) -> str:
@@ -29,7 +29,7 @@ def register_finish(client_request_finish: str) -> str:
     :param client_request_finish:
     :return: Encoded password file to be saved.
     """
-    return _opaquepy.register_server_finish_py(client_request_finish)
+    return _internal.register_server_finish_py(client_request_finish)
 
 
 def register_client(password: str) -> tuple[str, str]:
@@ -39,7 +39,7 @@ def register_client(password: str) -> tuple[str, str]:
     :param password:
     :return: Tuple of encoded response to the server and register state to be saved, respectively.
     """
-    return _opaquepy.register_client_py(password)
+    return _internal.register_client_py(password)
 
 
 def register_client_finish(
@@ -53,7 +53,7 @@ def register_client_finish(
     :param server_message:
     :return: Encoded response to the server.
     """
-    return _opaquepy.register_client_finish_py(
+    return _internal.register_client_finish_py(
         client_register_state, password, server_message
     )
 
@@ -70,7 +70,7 @@ def login(
     :param credential_id:
     :return: Tuple of encoded response to the client and login state to be saved, respectively.
     """
-    return _opaquepy.login_server_py(
+    return _internal.login_server_py(
         setup, password_file, client_request, credential_id
     )
 
@@ -83,7 +83,7 @@ def login_finish(client_request_finish: str, login_state: str) -> str:
     :param login_state: Saved login state from the previous step, base64url-encoded.
     :return: The session key, base64url-encoded.
     """
-    return _opaquepy.login_server_finish_py(client_request_finish, login_state)
+    return _internal.login_server_finish_py(client_request_finish, login_state)
 
 
 def login_client(password: str) -> tuple[str, str]:
@@ -93,7 +93,7 @@ def login_client(password: str) -> tuple[str, str]:
     :param password:
     :return: Tuple of encoded response to the server and login state to be saved, respectively.
     """
-    return _opaquepy.login_client_py(password)
+    return _internal.login_client_py(password)
 
 
 def login_client_finish(
@@ -108,6 +108,6 @@ def login_client_finish(
     :param server_message:
     :return: Tuple of encoded response to the server and session key, respectively.
     """
-    return _opaquepy.login_client_finish_py(
+    return _internal.login_client_finish_py(
         client_login_state, password, server_message
     )

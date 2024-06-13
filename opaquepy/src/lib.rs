@@ -1,6 +1,6 @@
-use opaquebind::{Error, create_setup};
-use opaquebind::server::{register_server, register_server_finish, login_server, login_server_finish};
-use opaquebind::client::{client_register, client_register_finish, client_login, client_login_finish};
+use opaque_borink::{Error, create_setup};
+use opaque_borink::server::{register_server, register_server_finish, login_server, login_server_finish};
+use opaque_borink::client::{client_register, client_register_finish, client_login, client_login_finish};
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 
@@ -24,16 +24,19 @@ impl From<OpaquePyError> for PyErr {
 }
 
 #[pymodule]
-fn _opaquepy(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(create_setup_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_server_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_server_finish_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_client_py, m)?)?;
-    m.add_function(wrap_pyfunction!(register_client_finish_py, m)?)?;
-    m.add_function(wrap_pyfunction!(login_server_py, m)?)?;
-    m.add_function(wrap_pyfunction!(login_server_finish_py, m)?)?;
-    m.add_function(wrap_pyfunction!(login_client_py, m)?)?;
-    m.add_function(wrap_pyfunction!(login_client_finish_py, m)?)?;
+fn opaquepy(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    let internal = PyModule::new_bound(m.py(), "_internal")?;
+    internal.add_function(wrap_pyfunction!(create_setup_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(register_server_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(register_server_finish_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(register_client_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(register_client_finish_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(login_server_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(login_server_finish_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(login_client_py, &internal)?)?;
+    internal.add_function(wrap_pyfunction!(login_client_finish_py, &internal)?)?;
+
+    m.add_submodule(&internal)?;
 
     Ok(())
 }

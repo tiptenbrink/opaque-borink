@@ -1,4 +1,4 @@
-from opaquepy.lib import (
+from .lib import (
     create_setup,
     register,
     register_finish,

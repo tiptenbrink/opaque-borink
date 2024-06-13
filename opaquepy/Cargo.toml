@@ -1,6 +1,6 @@
 [package]
 name = "opaquepy"
-version = "0.3.5"
+version = "0.3.7"
 edition = "2021"
 
 [lib]
@@ -8,8 +8,8 @@ name = "opaquepy"
 crate-type = ["cdylib"]
 
 [dependencies]
-opaquebind = { path = "../opaquebind" }
+opaque-borink = { path = "../opaque-borink" }
 
 [dependencies.pyo3]
-version = "0.19.2"
+version = "0.21"
 features = ["extension-module"]
