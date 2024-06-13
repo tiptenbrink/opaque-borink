@@ -1,12 +1,12 @@
 [package]
-name = "opaquebind"
-version = "0.3.6"
+name = "opaque-borink"
+version = "0.3.7"
 edition = "2021"
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 license = "Apache-2.0 OR MIT"
 keywords = ["opaque", "passwords", "authentication", "serialization"]
 readme = "README.md"
-repository = "https://github.com/tiptenbrink/opaque-borink/tree/v0.3.6/opaquebind"
+repository = "https://github.com/tiptenbrink/opaque-borink/tree/main/opaque-borink"
 description = "Simple configuration of OPAQUE, a passowrd-authenticated key exchange protocol."
 
 [dependencies]

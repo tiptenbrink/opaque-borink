@@ -1,8 +1,8 @@
-This crate was originally named `opaquebind`, but has been renamed to [`opaque-borink`](https://github.com/tiptenbrink/opaque-borink). The last version named `opaquebind` can be found found [here](https://github.com/tiptenbrink/opaque-borink/tree/v0.3.6/opaquebind).
-
 A simple configuration of the [opaque-ke](https://github.com/novifinancial/opaque-ke) OPAQUE implementation, using a base64url-encoded format to serialize and deserialize the Rust structs. 
 
-OPAQUE ([see the Internet-Draft](https://datatracker.ietf.org/doc/html/draft-krawczyk-cfrg-opaque-06)) is an upcoming standard for password authentication. It is more secure than a traditional simple salt and password hash scheme.
+OPAQUE ([see the Internet-Draft](https://datatracker.ietf.org/doc/draft-irtf-cfrg-opaque/)) is an upcoming standard for password authentication. It is more secure than a traditional simple salt and password hash scheme.
+
+It enables a workflow where the server never learns the user password, yet the server does not need to provide the salt to anyone who asks, providing security against pre-computation attacks.
 
 It uses a basic CipherSuite configured as follows:
 * [curve25519_dalek](https://github.com/dalek-cryptography/curve25519-dalek) Ristretto group as Group
@@ -12,5 +12,5 @@ It uses a basic CipherSuite configured as follows:
 
 It exposes four functions on both the server and client: login finish/start and register finish/start; as well as a key generation function.
 
-`opaquebind` serves as the core library for `opaquepy` and `@tiptenbrink/opaquewasm`, bindings for Python and WebAssembly, respectively.
+`opaque-borink` is useful as a stand-alone library, but also serves as the core library for `opaquepy` and `@tiptenbrink/opaquewasm`, bindings for Python and WebAssembly, respectively.
 
