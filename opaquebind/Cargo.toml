@@ -1,20 +1,17 @@
 [package]
 name = "opaquebind"
-version = "0.3.5"
+version = "0.3.6"
 edition = "2021"
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
-license = "Apache-2.0"
+license = "Apache-2.0 OR MIT"
 keywords = ["opaque", "passwords", "authentication", "serialization"]
 readme = "README.md"
-repository = "https://github.com/tiptenbrink/opaquebind/tree/main/opaquebind"
-description = "Simple interface to opaque-ke and core library for Python and WASM bindings."
-
-[lib]
-name = "opaquebind"
+repository = "https://github.com/tiptenbrink/opaque-borink/tree/main/opaquebind"
+description = "Simple configuration of OPAQUE, a passowrd-authenticated key exchange protocol."
 
 [dependencies]
 opaque-ke = { version = "2.0.0", features = ["argon2"] }
 sha2 = "0.10.8"
 rand = { version = "0.8.5", default-features = false, features = ["getrandom"] }
-base64 = "0.21.4"
+base64 = "0.22.1"
 argon2 = "0.4.1"

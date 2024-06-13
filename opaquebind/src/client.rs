@@ -1,12 +1,13 @@
-use base64::{Engine as _, engine::general_purpose as b64};
-use opaque_ke::{ClientLogin, ClientLoginFinishParameters, ClientLoginFinishResult,
-                ClientLoginStartResult, ClientRegistration,
-                ClientRegistrationFinishParameters, ClientRegistrationFinishResult,
-                ClientRegistrationStartResult, CredentialResponse, RegistrationResponse};
-use opaque_ke::errors::ProtocolError;
-use rand::rngs::OsRng;
 use crate::Cipher;
 use crate::Error;
+use base64::{engine::general_purpose as b64, Engine as _};
+use opaque_ke::errors::ProtocolError;
+use opaque_ke::{
+    ClientLogin, ClientLoginFinishParameters, ClientLoginFinishResult, ClientLoginStartResult,
+    ClientRegistration, ClientRegistrationFinishParameters, ClientRegistrationFinishResult,
+    ClientRegistrationStartResult, CredentialResponse, RegistrationResponse,
+};
+use rand::rngs::OsRng;
 
 pub fn client_register(password: &str) -> Result<(String, String), Error> {
     let pass_bytes = password.as_bytes();
@@ -21,12 +22,15 @@ pub fn client_register(password: &str) -> Result<(String, String), Error> {
     Ok((message_encoded, state_encoded))
 }
 
-pub fn client_register_finish(client_register_state: &str, password: &str, server_message: &str) -> Result<String, Error> {
+pub fn client_register_finish(
+    client_register_state: &str,
+    password: &str,
+    server_message: &str,
+) -> Result<String, Error> {
     let state_bytes = b64::URL_SAFE_NO_PAD.decode(client_register_state)?;
     let pass_bytes = password.as_bytes();
     let message_bytes = b64::URL_SAFE_NO_PAD.decode(server_message)?;
     let client_register_state = ClientRegistration::<Cipher>::deserialize(&state_bytes)?;
-
 
     let server_message = RegistrationResponse::<Cipher>::deserialize(&message_bytes)?;
 
@@ -51,7 +55,11 @@ pub fn client_login(password: &str) -> Result<(String, String), Error> {
     Ok((message_encoded, state_encoded))
 }
 
-pub fn client_login_finish(client_login_state: &str, password: &str, server_message: &str) -> Result<(String, String), Error> {
+pub fn client_login_finish(
+    client_login_state: &str,
+    password: &str,
+    server_message: &str,
+) -> Result<(String, String), Error> {
     let state_bytes = b64::URL_SAFE_NO_PAD.decode(client_login_state)?;
     let pass_bytes = password.as_bytes();
     let message_bytes = b64::URL_SAFE_NO_PAD.decode(server_message)?;
@@ -70,39 +78,41 @@ pub fn client_login_finish(client_login_state: &str, password: &str, server_mess
     Ok((message_encoded, session_encoded))
 }
 
-fn opaque_client_register(password: &[u8]) -> Result<ClientRegistrationStartResult<Cipher>, ProtocolError> {
+fn opaque_client_register(
+    password: &[u8],
+) -> Result<ClientRegistrationStartResult<Cipher>, ProtocolError> {
     let mut client_rng = OsRng;
-    ClientRegistration::<Cipher>::start(
-        &mut client_rng,
-        password,
-    )
+    ClientRegistration::<Cipher>::start(&mut client_rng, password)
 }
 
-fn opaque_client_register_finish(client_register_state: ClientRegistration<Cipher>, password: &[u8], server_message: RegistrationResponse<Cipher>)
-                                 -> Result<ClientRegistrationFinishResult<Cipher>, ProtocolError> {
+fn opaque_client_register_finish(
+    client_register_state: ClientRegistration<Cipher>,
+    password: &[u8],
+    server_message: RegistrationResponse<Cipher>,
+) -> Result<ClientRegistrationFinishResult<Cipher>, ProtocolError> {
     let mut client_rng = OsRng;
     client_register_state.finish(
         &mut client_rng,
         password,
         server_message,
-        ClientRegistrationFinishParameters::default()
+        ClientRegistrationFinishParameters::default(),
     )
 }
 
 fn opaque_client_login(password: &[u8]) -> Result<ClientLoginStartResult<Cipher>, ProtocolError> {
     let mut client_rng = OsRng;
-    ClientLogin::<Cipher>::start(
-        &mut client_rng,
-        password,
-    )
+    ClientLogin::<Cipher>::start(&mut client_rng, password)
 }
 
-fn opaque_client_login_finish(client_login_state: Box<ClientLogin<Cipher>>, password: &[u8], server_message: Box<CredentialResponse<Cipher>>)
-                              -> Result<ClientLoginFinishResult<Cipher>, ProtocolError> {
+fn opaque_client_login_finish(
+    client_login_state: Box<ClientLogin<Cipher>>,
+    password: &[u8],
+    server_message: Box<CredentialResponse<Cipher>>,
+) -> Result<ClientLoginFinishResult<Cipher>, ProtocolError> {
     client_login_state.finish(
         password,
         *server_message,
-        ClientLoginFinishParameters::default()
+        ClientLoginFinishParameters::default(),
     )
 }
 
@@ -158,7 +168,8 @@ mod tests {
         let password = "clientele".to_string();
         let server_message = "1kHXX25U1NE0nki_rL-5KnPRre6-CD2P4ApqhDOXL2m5xgVIT1oO4M5n5r6b2mfGx7Xq4kiMFQH8pfrGLok2H0A20_p30giVapbzQL1QYRiG2jJK2AUlhOK6lTr5YshNJNOqHgn0eGFUWiYwZ606pYfIJDaiUa5p9Mhmb9lWTpzP9akkvjDkbaxViRLB_-T9QZyTjiy-67bkepYWTeCEnqrkdw-_ckKEcBRJrlVX0yMqHtzwMdoMX6LKdT02BCXMde7kdxT5mWUMcMozBg0SLrTAehZiHgqQYq94TAK-lmiePUljPSSHFERFm-0h7r2t2QL-hLi1DmY53upbKvTQFyN-IzuAmK7UsG4MgcYVcGKQXlrF4keZVJaa5dOz5YaFYp1oBXm26hUdtKzXf-9gVTtlDc3ep-G8GNyiDNLiVwU".to_string();
 
-        let (response, session_key) = client_login_finish(&state, &password, &server_message).unwrap();
+        let (response, session_key) =
+            client_login_finish(&state, &password, &server_message).unwrap();
         println!("{}", response);
         println!("{}", session_key);
         // example response

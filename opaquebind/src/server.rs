@@ -1,17 +1,26 @@
-use base64::{Engine as _, engine::general_purpose as b64};
-use opaque_ke::{CredentialFinalization, CredentialRequest, RegistrationRequest, RegistrationUpload, ServerLogin, ServerLoginFinishResult, ServerLoginStartParameters, ServerLoginStartResult, ServerRegistration, ServerRegistrationStartResult, ServerSetup};
+use base64::{engine::general_purpose as b64, Engine as _};
 use opaque_ke::errors::ProtocolError;
+use opaque_ke::{
+    CredentialFinalization, CredentialRequest, RegistrationRequest, RegistrationUpload,
+    ServerLogin, ServerLoginFinishResult, ServerLoginStartParameters, ServerLoginStartResult,
+    ServerRegistration, ServerRegistrationStartResult, ServerSetup,
+};
 use rand::rngs::OsRng;
 
 use crate::Cipher;
 use crate::Error;
 
-pub fn register_server(server_setup: String, client_request: String, credential_id: String) -> Result<String, Error> {
+pub fn register_server(
+    server_setup: String,
+    client_request: String,
+    credential_id: String,
+) -> Result<String, Error> {
     let setup_bytes = b64::URL_SAFE_NO_PAD.decode(server_setup)?;
     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request)?;
     let credential_bytes = credential_id.as_bytes();
     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
-    let client_request: RegistrationRequest<Cipher> = RegistrationRequest::deserialize(&request_bytes)?;
+    let client_request: RegistrationRequest<Cipher> =
+        RegistrationRequest::deserialize(&request_bytes)?;
 
     let s = opaque_server_register(setup, client_request, credential_bytes)?;
 
@@ -23,7 +32,8 @@ pub fn register_server(server_setup: String, client_request: String, credential_
 
 pub fn register_server_finish(client_request_finish: String) -> Result<String, Error> {
     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request_finish)?;
-    let client_request_finish: RegistrationUpload<Cipher> = RegistrationUpload::deserialize(&request_bytes)?;
+    let client_request_finish: RegistrationUpload<Cipher> =
+        RegistrationUpload::deserialize(&request_bytes)?;
 
     let s = opaque_server_register_finish(client_request_finish)?;
 
@@ -33,16 +43,22 @@ pub fn register_server_finish(client_request_finish: String) -> Result<String, E
     Ok(password_file_encoded)
 }
 
-pub fn login_server(server_setup: String, password_file: String, client_request: String, credential_id: String) -> Result<(String, String), Error> {
+pub fn login_server(
+    server_setup: String,
+    password_file: String,
+    client_request: String,
+    credential_id: String,
+) -> Result<(String, String), Error> {
     let password_file_bytes = b64::URL_SAFE_NO_PAD.decode(password_file)?;
     let setup_bytes = b64::URL_SAFE_NO_PAD.decode(server_setup)?;
     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request)?;
     let credential_bytes = credential_id.as_bytes();
     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
-    let password_file= ServerRegistration::<Cipher>::deserialize(&password_file_bytes)?;
-    let client_request: Box<CredentialRequest<Cipher>> = Box::new(CredentialRequest::deserialize(&request_bytes)?);
+    let password_file = ServerRegistration::<Cipher>::deserialize(&password_file_bytes)?;
+    let client_request: Box<CredentialRequest<Cipher>> =
+        Box::new(CredentialRequest::deserialize(&request_bytes)?);
 
-    let s = opaque_server_login(setup, password_file, client_request, credential_bytes)?;
+    let s = opaque_server_login(setup, password_file, *client_request, credential_bytes)?;
 
     let response_bytes = s.message.serialize();
     let state_bytes = s.state.serialize();
@@ -53,13 +69,18 @@ pub fn login_server(server_setup: String, password_file: String, client_request:
     Ok((response_encoded, state_encoded))
 }
 
-pub fn login_server_finish(client_request_finish: String, login_state: String) -> Result<String, Error> {
+pub fn login_server_finish(
+    client_request_finish: String,
+    login_state: String,
+) -> Result<String, Error> {
     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request_finish)?;
     let state_bytes = b64::URL_SAFE_NO_PAD.decode(login_state)?;
-    let client_request_finish = Box::new(CredentialFinalization::<Cipher>::deserialize(&request_bytes)?);
+    let client_request_finish = Box::new(CredentialFinalization::<Cipher>::deserialize(
+        &request_bytes,
+    )?);
     let login_state = Box::new(ServerLogin::<Cipher>::deserialize(&state_bytes)?);
 
-    let s = opaque_server_login_finish(client_request_finish, login_state)?;
+    let s = opaque_server_login_finish(*client_request_finish, *login_state)?;
 
     let session_key_bytes = s.session_key;
     let session_key_encoded = b64::URL_SAFE_NO_PAD.encode(session_key_bytes);
@@ -67,38 +88,42 @@ pub fn login_server_finish(client_request_finish: String, login_state: String) -
     Ok(session_key_encoded)
 }
 
-fn opaque_server_register(setup: ServerSetup<Cipher>, client_request: RegistrationRequest<Cipher>, credential_id_bytes: &[u8])
-                          -> Result<ServerRegistrationStartResult<Cipher>, ProtocolError> {
-    ServerRegistration::<Cipher>::start(
-        &setup,
-        client_request,
-        credential_id_bytes,
-    )
+fn opaque_server_register(
+    setup: ServerSetup<Cipher>,
+    client_request: RegistrationRequest<Cipher>,
+    credential_id_bytes: &[u8],
+) -> Result<ServerRegistrationStartResult<Cipher>, ProtocolError> {
+    ServerRegistration::<Cipher>::start(&setup, client_request, credential_id_bytes)
 }
 
-fn opaque_server_register_finish(client_request_finish: RegistrationUpload<Cipher>)
-                                 -> Result<ServerRegistration<Cipher>, ProtocolError> {
+fn opaque_server_register_finish(
+    client_request_finish: RegistrationUpload<Cipher>,
+) -> Result<ServerRegistration<Cipher>, ProtocolError> {
     Ok(ServerRegistration::<Cipher>::finish(client_request_finish))
 }
 
-fn opaque_server_login(setup: ServerSetup<Cipher>, password_file: ServerRegistration<Cipher>, client_request: Box<CredentialRequest<Cipher>>, credential_id_bytes: &[u8])
-                       -> Result<ServerLoginStartResult<Cipher>, ProtocolError> {
+fn opaque_server_login(
+    setup: ServerSetup<Cipher>,
+    password_file: ServerRegistration<Cipher>,
+    client_request: CredentialRequest<Cipher>,
+    credential_id_bytes: &[u8],
+) -> Result<ServerLoginStartResult<Cipher>, ProtocolError> {
     let mut server_rng = OsRng;
     ServerLogin::<Cipher>::start(
         &mut server_rng,
         &setup,
         Some(password_file),
-        *client_request,
+        client_request,
         credential_id_bytes,
         ServerLoginStartParameters::default(),
     )
 }
 
-fn opaque_server_login_finish(client_request_finish: Box<CredentialFinalization<Cipher>>, login_state: Box<ServerLogin<Cipher>>)
-                              -> Result<ServerLoginFinishResult<Cipher>, ProtocolError> {
-    login_state.finish(
-        *client_request_finish
-    )
+fn opaque_server_login_finish(
+    client_request_finish: CredentialFinalization<Cipher>,
+    login_state: ServerLogin<Cipher>,
+) -> Result<ServerLoginFinishResult<Cipher>, ProtocolError> {
+    login_state.finish(client_request_finish)
 }
 
 #[cfg(test)]
@@ -136,7 +161,8 @@ mod tests {
         let password_file = "wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy".to_string();
         let cred_id = "someperson".to_string();
 
-        let (response, state) = login_server(setup, password_file, client_message, cred_id).unwrap();
+        let (response, state) =
+            login_server(setup, password_file, client_message, cred_id).unwrap();
 
         println!("{}", response);
         println!("{}", state);

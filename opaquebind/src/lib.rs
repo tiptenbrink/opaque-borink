@@ -1,13 +1,13 @@
-pub mod server;
 pub mod client;
+pub mod server;
 
-use std::fmt::{Debug, Display, Formatter};
-use opaque_ke::ciphersuite::CipherSuite;
-use base64::{Engine as _, engine::general_purpose as b64};
 use base64::DecodeError;
-pub use opaque_ke::errors::{ProtocolError};
+use base64::{engine::general_purpose as b64, Engine as _};
+use opaque_ke::ciphersuite::CipherSuite;
+pub use opaque_ke::errors::ProtocolError;
 use opaque_ke::ServerSetup;
 use rand::rngs::OsRng;
+use std::fmt::{Debug, Display, Formatter};
 
 pub struct Cipher;
 impl CipherSuite for Cipher {
@@ -20,7 +20,7 @@ impl CipherSuite for Cipher {
 #[derive(Debug)]
 pub enum Error {
     ProtocolError(ProtocolError),
-    DecodeError(DecodeError)
+    DecodeError(DecodeError),
 }
 
 impl Display for Error {
@@ -46,7 +46,7 @@ impl From<DecodeError> for Error {
 pub fn create_setup() -> String {
     let mut rng = OsRng;
     let server_setup = ServerSetup::<Cipher>::new(&mut rng);
-    let server_setup_serialized= ServerSetup::serialize(&server_setup);
+    let server_setup_serialized = ServerSetup::serialize(&server_setup);
 
     b64::URL_SAFE_NO_PAD.encode(server_setup_serialized)
 }
