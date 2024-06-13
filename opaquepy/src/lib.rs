@@ -1,8 +1,12 @@
-use opaque_borink::{Error, create_setup};
-use opaque_borink::server::{register_server, register_server_finish, login_server, login_server_finish};
-use opaque_borink::client::{client_register, client_register_finish, client_login, client_login_finish};
-use pyo3::prelude::*;
+use opaque_borink::client::{
+    client_login, client_login_finish, client_register, client_register_finish,
+};
+use opaque_borink::server::{
+    login_server, login_server_finish, register_server, register_server_finish,
+};
+use opaque_borink::{create_setup, Error};
 use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
 
 pub type OpaquePyResult<T> = Result<T, OpaquePyError>;
 
@@ -47,7 +51,11 @@ fn create_setup_py() -> String {
 }
 
 #[pyfunction]
-fn register_server_py(setup: String, client_request: String, credential_id: String) -> OpaquePyResult<String> {
+fn register_server_py(
+    setup: String,
+    client_request: String,
+    credential_id: String,
+) -> OpaquePyResult<String> {
     Ok(register_server(setup, client_request, credential_id)?)
 }
 
@@ -62,17 +70,38 @@ fn register_client_py(password: String) -> OpaquePyResult<(String, String)> {
 }
 
 #[pyfunction]
-fn register_client_finish_py(client_register_state: String, password: String, server_message: String) -> OpaquePyResult<String> {
-    Ok(client_register_finish(&client_register_state, &password, &server_message)?)
+fn register_client_finish_py(
+    client_register_state: String,
+    password: String,
+    server_message: String,
+) -> OpaquePyResult<String> {
+    Ok(client_register_finish(
+        &client_register_state,
+        &password,
+        &server_message,
+    )?)
 }
 
 #[pyfunction]
-fn login_server_py(setup: String, password_file: String, client_request: String, credential_id: String) -> OpaquePyResult<(String, String)> {
-    Ok(login_server(setup, password_file, client_request, credential_id)?)
+fn login_server_py(
+    setup: String,
+    password_file: String,
+    client_request: String,
+    credential_id: String,
+) -> OpaquePyResult<(String, String)> {
+    Ok(login_server(
+        setup,
+        password_file,
+        client_request,
+        credential_id,
+    )?)
 }
 
 #[pyfunction]
-fn login_server_finish_py(client_request_finish: String, login_state: String) -> OpaquePyResult<String> {
+fn login_server_finish_py(
+    client_request_finish: String,
+    login_state: String,
+) -> OpaquePyResult<String> {
     Ok(login_server_finish(client_request_finish, login_state)?)
 }
 
@@ -82,6 +111,14 @@ fn login_client_py(password: String) -> OpaquePyResult<(String, String)> {
 }
 
 #[pyfunction]
-fn login_client_finish_py(client_login_state: String, password: String, server_message: String) -> OpaquePyResult<(String, String)> {
-    Ok(client_login_finish(&client_login_state, &password, &server_message)?)
+fn login_client_finish_py(
+    client_login_state: String,
+    password: String,
+    server_message: String,
+) -> OpaquePyResult<(String, String)> {
+    Ok(client_login_finish(
+        &client_login_state,
+        &password,
+        &server_message,
+    )?)
 }

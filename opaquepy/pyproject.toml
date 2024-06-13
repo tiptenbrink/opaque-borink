@@ -20,7 +20,7 @@ description = "Python bindings for opaque-ke."
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 license = "Apache-2"
 packages = [
-    { include = "rustfrc", from = "python" },
+    { include = "opaquepy", from = "python" },
 ]
 
 
