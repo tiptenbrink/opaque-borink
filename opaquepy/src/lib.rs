@@ -56,12 +56,12 @@ fn register_server_py(
     client_request: String,
     credential_id: String,
 ) -> OpaquePyResult<String> {
-    Ok(register_server(setup, client_request, credential_id)?)
+    Ok(register_server(&setup, &client_request, &credential_id)?)
 }
 
 #[pyfunction]
 fn register_server_finish_py(client_request_finish: String) -> OpaquePyResult<String> {
-    Ok(register_server_finish(client_request_finish)?)
+    Ok(register_server_finish(&client_request_finish)?)
 }
 
 #[pyfunction]
@@ -90,10 +90,10 @@ fn login_server_py(
     credential_id: String,
 ) -> OpaquePyResult<(String, String)> {
     Ok(login_server(
-        setup,
-        password_file,
-        client_request,
-        credential_id,
+        &setup,
+        &password_file,
+        &client_request,
+        &credential_id,
     )?)
 }
 
@@ -102,7 +102,7 @@ fn login_server_finish_py(
     client_request_finish: String,
     login_state: String,
 ) -> OpaquePyResult<String> {
-    Ok(login_server_finish(client_request_finish, login_state)?)
+    Ok(login_server_finish(&client_request_finish, &login_state)?)
 }
 
 #[pyfunction]
