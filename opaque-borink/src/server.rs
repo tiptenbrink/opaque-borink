@@ -134,54 +134,53 @@ mod tests {
     fn server_register_output() {
         // password 'clientele'
         let setup = "C5HVEMyOKYglRys_3a58GHLeRM0oa_pjxSO6mu-WEnfIdOO5mE7GpCz_Z0xrntzbeMQI3GACQet9N_3lh1eaEWM18tqMDhUEJ_TwfSJNEXavKLc2DHlxWcd5Xd8aiPMJJ11dZmU76urlWHZw5xJuvDfLbdnt2tIj-fmY9PobZQg".to_string();
-        let message = "3i3SEzJNZKvsIfADx1lf-zk4SNeitkTp41-kpxWOUxE".to_string();
+        let message = "dn17rg3EzeikxJ4rWay0DCnSax5JoQOEifmhfwj5Jjs".to_string();
         let cred_id = "someperson".to_string();
 
         let response = register_server(&setup,& message, &cred_id).unwrap();
         println!("{}", response);
         // example response
-        // mKbmMmzMVuq9r2yrfWtJXQCYTFVxAD3ZHkPLFhGY-hqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew
+        // fDCnRbPyYdSCw_6cFCDzo5Zcd5OwV2TnWNg43eWQIyqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew
     }
 
     #[test]
     fn server_register_finish() {
-        let client_message = "wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy".to_string();
+        let client_message = "LJ0rg3mSZ-x1tDbobI0xvroBjAPQ5fnAgrnEmxc67giA0XDjR8pJaOuNGlWtRku5Hk57yBlL6YrjBUQJ--7OMhPZra40WvmWSu7yT8s-CBAsE0jobWK-9qXk3xDv7TlK-g_TF3JzR3s8MntBWjIuN5Ii7Le93coLGLvm7xjQtuYHbszz3HBv-gBu_xlj7YitpgyQzYpcJGslbezqxEvZz4Jz0R64np94JBDibI7syTw13ZJ74tbjWiJbvwvKb5a-".to_string();
         let password_file = register_server_finish(&client_message).unwrap();
         println!("{}", password_file)
 
         // example file:
-        // wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy
+        // LJ0rg3mSZ-x1tDbobI0xvroBjAPQ5fnAgrnEmxc67giA0XDjR8pJaOuNGlWtRku5Hk57yBlL6YrjBUQJ--7OMhPZra40WvmWSu7yT8s-CBAsE0jobWK-9qXk3xDv7TlK-g_TF3JzR3s8MntBWjIuN5Ii7Le93coLGLvm7xjQtuYHbszz3HBv-gBu_xlj7YitpgyQzYpcJGslbezqxEvZz4Jz0R64np94JBDibI7syTw13ZJ74tbjWiJbvwvKb5a-
     }
 
     #[test]
     fn server_login() {
         let setup = "C5HVEMyOKYglRys_3a58GHLeRM0oa_pjxSO6mu-WEnfIdOO5mE7GpCz_Z0xrntzbeMQI3GACQet9N_3lh1eaEWM18tqMDhUEJ_TwfSJNEXavKLc2DHlxWcd5Xd8aiPMJJ11dZmU76urlWHZw5xJuvDfLbdnt2tIj-fmY9PobZQg".to_string();
-        let client_message = "iIx1sW5pj2GlKnb4V1MRrCFmLTkW_hhyXQCGmczMZUJZ50HlQnVjuPyvv6oKpD7d0ZzPDbZcnliqDlN-GHdrwUpAvLRYzwk1earfTNefonfH9faSj7307IMRwrfGyOhZ".to_string();
+        let client_message = "8FZa7PGvxQgFwh3WGP-HXd0_f1EgeVKHcWMBfpwYNCsqnNKMtkDQcb9j-yw0d3POSd81f0cgQAZiTo6nIrpvUATmdt9VnHbQDazHEA-D0iJ4uzlQbjjGHQ1UgnCqaTBG".to_string();
         // password 'clientiele'
-        let password_file = "wBtSZIhSPTwEY13yNT6nfWhj0WVRnhiqsnAYhUu7nj_5mmv-Trgm3DULYEZLwYhQaadsk8rI8n0PD1mZi8AL7517p9b5wisa4TxrNDyifHLUI_P09Re5KTf8CUr_0I6vMYOhCBl7WgItYfj1h-lAZU5E77fmsl-6l4MIZ5oYIKENNClbtgX9GYz1WkrZpJdeDdnAA5AI-0cfh3AX8UjpD46BhzwxkFDhtMra4vpRFQSAvu7gVzsZSDQJoqTcYXjy".to_string();
+        let password_file = "LJ0rg3mSZ-x1tDbobI0xvroBjAPQ5fnAgrnEmxc67giA0XDjR8pJaOuNGlWtRku5Hk57yBlL6YrjBUQJ--7OMhPZra40WvmWSu7yT8s-CBAsE0jobWK-9qXk3xDv7TlK-g_TF3JzR3s8MntBWjIuN5Ii7Le93coLGLvm7xjQtuYHbszz3HBv-gBu_xlj7YitpgyQzYpcJGslbezqxEvZz4Jz0R64np94JBDibI7syTw13ZJ74tbjWiJbvwvKb5a-".to_string();
         let cred_id = "someperson".to_string();
 
         let (response, state) =
             login_server(&setup, &password_file, &client_message, &cred_id).unwrap();
 
-        println!("{}", response);
-        println!("{}", state);
+        println!("resp={}", response);
+        println!("state={}", state);
         // example response
-        // 1kHXX25U1NE0nki_rL-5KnPRre6-CD2P4ApqhDOXL2m5xgVIT1oO4M5n5r6b2mfGx7Xq4kiMFQH8pfrGLok2H0A20_p30giVapbzQL1QYRiG2jJK2AUlhOK6lTr5YshNJNOqHgn0eGFUWiYwZ606pYfIJDaiUa5p9Mhmb9lWTpzP9akkvjDkbaxViRLB_-T9QZyTjiy-67bkepYWTeCEnqrkdw-_ckKEcBRJrlVX0yMqHtzwMdoMX6LKdT02BCXMde7kdxT5mWUMcMozBg0SLrTAehZiHgqQYq94TAK-lmiePUljPSSHFERFm-0h7r2t2QL-hLi1DmY53upbKvTQFyN-IzuAmK7UsG4MgcYVcGKQXlrF4keZVJaa5dOz5YaFYp1oBXm26hUdtKzXf-9gVTtlDc3ep-G8GNyiDNLiVwU
+        // lskLi18T8NM-WjY926___29u0RoY0XcKAz8-Wzu9gRMYWfgTuEk5qx4ZF6OZkTfpM_eufiKYIoKK2HNOTUwSf-bUsZRi9vydqe2yB3Wz5y3TiWI6CkVzACIFfbKynKGg0DQ4Sr5KYhsnMTzoF1Me27oq5sONK-R1muZ8JZpGXMB8l5mllx8-jfqFfe-8EEDIH0vyi9nzBKbzZSyexPiI00js1Vo5WU55jFWWdMldTg67WhPTgfITmgoGr-bQp-6wdwJGva12wMkvwFPptzk-0TMMu04YxIRzjC3OoKNxKtT8iOPTpq6SHFnVoMq3hwsYVFXxim36iickj0BzHeqebWVoo3FV9Da-ph8i6a7sKNGpe4Q4wN-0WpBgMurTkwvwcvhUCGMYvde0j7u1QOKDI_UjA9jeTlASlQHSmu0se7E
         // example state
-        // NjqD_19cS-XSDTfOdHj5g8wC1zMlTy-ydF4kiwKHUjbC9e_8CZb4pkLi9t0694FS_QgT6T_jktK1PbSoPqsTyas6rleW5Ttf0yA_a488YahFnBYHhsjXRWccL4Y6atjNeFcYOhc2f6t5oLU4p_FIA1eKQQFNRMXxEXEuHDl_DKanO3_4Iqs659gCx0IrOZoxnBDvxk8sHXNO19-gmzAVGgAQp-wERCoW3FP6h21PZwRA99AWSOe2YETc-VL_MtRT
+        // B552YqssmUw1OOCGiXnnJB51DwX38aYMhxTl7elzLHbnVlX1cXdlXcT2nUlU3gw3IyH-6PsAhGXDv-X20Knt3d6PlUtCThpEuiH1RxehA1u9R_OBS8ctVeeHLHhzNys4vLeWBQzHh_-sW3erjRuMBUxQQwMcgQl-4Kh_RWfIp6M8a3A1fQVtPc3V0PdNwFH9pkn26_03KwZSi7POpigdJiOHZr9fje88PY_zv5MZxb_ohiblddOWYzwYlOmNidkI
     }
 
     #[test]
     fn server_login_finish() {
         // correspond to above
-        let client_message = "eP_3skqnrkJXs-AZpXqaxihP4EsF1ek8eDxH4ktDflExfEvNF99-oVZ24hkahw05v-rH9B-1WCs91dGteIMH9Q".to_string();
-        let state = "NjqD_19cS-XSDTfOdHj5g8wC1zMlTy-ydF4kiwKHUjbC9e_8CZb4pkLi9t0694FS_QgT6T_jktK1PbSoPqsTyas6rleW5Ttf0yA_a488YahFnBYHhsjXRWccL4Y6atjNeFcYOhc2f6t5oLU4p_FIA1eKQQFNRMXxEXEuHDl_DKanO3_4Iqs659gCx0IrOZoxnBDvxk8sHXNO19-gmzAVGgAQp-wERCoW3FP6h21PZwRA99AWSOe2YETc-VL_MtRT".to_string();
+        let client_message = "J_aMsbRzBJYQcB839mopFnkzHgCsfCpxDCR3Q-WtYEHnFtDMyf3fVk4u7KUHPIVoZo8Fc6z2KQASLr2kTpUpjQ".to_string();
+        let state = "B552YqssmUw1OOCGiXnnJB51DwX38aYMhxTl7elzLHbnVlX1cXdlXcT2nUlU3gw3IyH-6PsAhGXDv-X20Knt3d6PlUtCThpEuiH1RxehA1u9R_OBS8ctVeeHLHhzNys4vLeWBQzHh_-sW3erjRuMBUxQQwMcgQl-4Kh_RWfIp6M8a3A1fQVtPc3V0PdNwFH9pkn26_03KwZSi7POpigdJiOHZr9fje88PY_zv5MZxb_ohiblddOWYzwYlOmNidkI".to_string();
 
         let session = login_server_finish(&client_message,& state).unwrap();
 
-        println!("{}", session)
-        // example session key
-        // pzt_-CKrOufYAsdCKzmaMZwQ78ZPLB1zTtffoJswFRoAEKfsBEQqFtxT-odtT2cEQPfQFkjntmBE3PlS_zLUUw
+        let expected_key = "PGtwNX0FbT3N1dD3TcBR_aZJ9uv9NysGUouzzqYoHSYjh2a_X43vPD2P87-TGcW_6IYm5XXTlmM8GJTpjYnZCA";
+        assert_eq!(expected_key, session);
     }
 }

@@ -19,3 +19,9 @@ It exposes four functions on both the server and client: login finish/start and 
 #### v0.4.1
 
 - Adds support for building on newer Rust, backports Argon v0.4.1 support to the fixed version, should still work as before
+
+#### v0.5.0
+
+- BREAKING: Update OPAQUE to v3, which is a new protocol version and thus previous registrations are no longer valid
+- BREAKING: Update Argon2 to v0.5, which uses different default parameters, also causing registrations to become invalid
+- It is therefore recommended to reregister and reauthenticate all new users
