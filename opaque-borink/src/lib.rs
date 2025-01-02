@@ -9,12 +9,34 @@ use opaque_ke::ServerSetup;
 use rand::rngs::OsRng;
 use std::fmt::{Debug, Display, Formatter};
 
+mod argon_backport {
+    use opaque_ke::{errors::InternalError, ksf::Ksf};
+    use generic_array::{ArrayLength, GenericArray};
+
+    #[derive(Default)]
+    pub struct Argon0d4d1Wrapper(argon2::Argon2<'static>);
+
+    // Below code is taken directly from the `opaque-ke` project licensed under Apache 2.0/MIT
+    // Necessary because new version uses Argon 0.5 which changed its parameters
+    impl Ksf for Argon0d4d1Wrapper {
+        fn hash<L: ArrayLength<u8>>(
+            &self,
+            input: GenericArray<u8, L>,
+        ) -> Result<GenericArray<u8, L>, InternalError> {
+            let mut output = GenericArray::default();
+            self.0.hash_password_into(&input, &[0; argon2::RECOMMENDED_SALT_LEN], &mut output)
+                .map_err(|_| InternalError::KsfError)?;
+            Ok(output)
+        }
+    }
+}
+
 pub struct Cipher;
 impl CipherSuite for Cipher {
     type OprfCs = opaque_ke::Ristretto255;
     type KeGroup = opaque_ke::Ristretto255;
     type KeyExchange = opaque_ke::key_exchange::tripledh::TripleDh;
-    type Ksf = argon2::Argon2<'static>;
+    type Ksf = argon_backport::Argon0d4d1Wrapper;
 }
 
 #[derive(Debug)]

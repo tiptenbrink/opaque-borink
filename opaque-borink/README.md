@@ -14,3 +14,8 @@ It exposes four functions on both the server and client: login finish/start and 
 
 `opaque-borink` is useful as a stand-alone library, but also serves as the core library for `opaquepy` and `@tiptenbrink/opaquewasm`, bindings for Python and WebAssembly, respectively.
 
+### Changelog
+
+#### v0.4.1
+
+- Adds support for building on newer Rust, backports Argon v0.4.1 support to the fixed version, should still work as before

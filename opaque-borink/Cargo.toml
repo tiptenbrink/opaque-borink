@@ -1,6 +1,6 @@
 [package]
 name = "opaque-borink"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
 license = "Apache-2.0 OR MIT"
@@ -10,8 +10,9 @@ repository = "https://github.com/tiptenbrink/opaque-borink/tree/main/opaque-bori
 description = "Simple configuration of OPAQUE, a passowrd-authenticated key exchange protocol."
 
 [dependencies]
-opaque-ke = { version = "2.0.0", features = ["argon2"] }
+opaque-ke = { version = "2.1.0-pre.1" }
 sha2 = "0.10.8"
 rand = { version = "0.8.5", default-features = false, features = ["getrandom"] }
 base64 = "0.22.1"
 argon2 = "0.4.1"
+generic-array = "0.14"
