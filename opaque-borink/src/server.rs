@@ -137,7 +137,7 @@ mod tests {
         let message = "dn17rg3EzeikxJ4rWay0DCnSax5JoQOEifmhfwj5Jjs".to_string();
         let cred_id = "someperson".to_string();
 
-        let response = register_server(&setup,& message, &cred_id).unwrap();
+        let response = register_server(&setup, &message, &cred_id).unwrap();
         println!("{}", response);
         // example response
         // fDCnRbPyYdSCw_6cFCDzo5Zcd5OwV2TnWNg43eWQIyqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew
@@ -178,7 +178,7 @@ mod tests {
         let client_message = "J_aMsbRzBJYQcB839mopFnkzHgCsfCpxDCR3Q-WtYEHnFtDMyf3fVk4u7KUHPIVoZo8Fc6z2KQASLr2kTpUpjQ".to_string();
         let state = "B552YqssmUw1OOCGiXnnJB51DwX38aYMhxTl7elzLHbnVlX1cXdlXcT2nUlU3gw3IyH-6PsAhGXDv-X20Knt3d6PlUtCThpEuiH1RxehA1u9R_OBS8ctVeeHLHhzNys4vLeWBQzHh_-sW3erjRuMBUxQQwMcgQl-4Kh_RWfIp6M8a3A1fQVtPc3V0PdNwFH9pkn26_03KwZSi7POpigdJiOHZr9fje88PY_zv5MZxb_ohiblddOWYzwYlOmNidkI".to_string();
 
-        let session = login_server_finish(&client_message,& state).unwrap();
+        let session = login_server_finish(&client_message, &state).unwrap();
 
         let expected_key = "PGtwNX0FbT3N1dD3TcBR_aZJ9uv9NysGUouzzqYoHSYjh2a_X43vPD2P87-TGcW_6IYm5XXTlmM8GJTpjYnZCA";
         assert_eq!(expected_key, session);
