@@ -193,14 +193,17 @@ pub(crate) mod opaque_impl {
             }
         }
 
-        #[cfg(test)]
-        pub fn from_state(bytes: &[u8]) -> Self {
-            let login = ClientRegistration::<Cipher>::deserialize(bytes).unwrap();
+        pub fn deserialize(bytes: &[u8]) -> Result<Self, Error> {
+            let login = ClientRegistration::<Cipher>::deserialize(bytes)?;
 
-            Self {
+            Ok(Self {
                 rng: thread_rng(),
                 state: Some(login),
-            }
+            })
+        }
+
+        pub fn serialize(&self) -> [u8; REGISTER_CLIENT_STATE_LEN] {
+            self.state.as_ref().expect("Can only serialize after first step is completed!").serialize().into_array()
         }
     }
 
@@ -212,14 +215,17 @@ pub(crate) mod opaque_impl {
             }
         }
 
-        #[cfg(test)]
-        pub fn from_state(bytes: &[u8]) -> Self {
-            let login = ClientLogin::<Cipher>::deserialize(bytes).unwrap();
+        pub fn deserialize(bytes: &[u8]) -> Result<Self, Error> {
+            let login = ClientLogin::<Cipher>::deserialize(bytes)?;
 
-            Self {
+            Ok(Self {
                 rng: thread_rng(),
                 state: Some(login),
-            }
+            })
+        }
+
+        pub fn serialize(&self) -> [u8; LOGIN_CLIENT_STATE_LEN] {
+            self.state.as_ref().expect("Can only serialize after first step is completed!").serialize().into_array()
         }
     }
 
@@ -291,12 +297,13 @@ pub(crate) mod opaque_impl {
 
     pub const LOGIN_SERVER_MESSAGE_LEN: usize = 320;
     pub const LOGIN_SERVER_STATE_LEN: usize = 192;
-
+    pub const LOGIN_CLIENT_STATE_LEN: usize = 192;
     pub const LOGIN_CLIENT_MESSAGE_LEN: usize = 96;
     pub const LOGIN_FINISH_MESSAGE_LEN: usize = 64;
-
-    pub const REGISTER_CLIENT_MESSAGE_LEN: usize = 32;
+    
     pub const REGISTER_SERVER_MESSAGE_LEN: usize = 64;
+    pub const REGISTER_CLIENT_STATE_LEN: usize = 64;
+    pub const REGISTER_CLIENT_MESSAGE_LEN: usize = 32;
     pub const REGISTER_FINISH_MESSAGE_LEN: usize = 192;
 
     pub const SHARED_SECRET_LEN: usize = 64;
@@ -357,6 +364,7 @@ pub(crate) mod opaque_impl {
                     .into_array::<REGISTER_CLIENT_MESSAGE_LEN>()
                     .as_slice()
             );
+            assert_eq!(REGISTER_CLIENT_STATE_LEN, a.state.serialize().len());
 
             let b =
                 ServerRegistration::start(&server_setup, a.message, "my_user".as_bytes()).unwrap();
@@ -407,6 +415,7 @@ pub(crate) mod opaque_impl {
                     .into_array::<LOGIN_CLIENT_MESSAGE_LEN>()
                     .as_slice()
             );
+            assert_eq!(LOGIN_CLIENT_STATE_LEN, d.state.serialize().len());
 
             let e = ServerLogin::<Cipher>::start(
                 &mut rng,
@@ -448,6 +457,8 @@ pub(crate) mod opaque_impl {
     }
 }
 
+// The following code is taken from version 1.1.1 of https://github.com/fizyk20/generic-array under the MIT License
+// It's a backport of some functions that allow conversion to normal arrays to the version of generic array used in opaque_ke (0.14.7)
 mod generic_array_backport {
     use generic_array::{ArrayLength, GenericArray};
     use typenum::{Const, ToUInt};

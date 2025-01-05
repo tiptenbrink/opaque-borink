@@ -1,9 +1,9 @@
 [project]
 name = "opaquepy"
-version = "0.4.0"
+version = "0.6.0"
 description = "Python bindings for opaque-ke."
 readme = "README.md"
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.9, <3.14"
 license = {text = "Apache-2.0"}
 authors = [
     {email = "75669206+tiptenbrink@users.noreply.github.com"},
@@ -13,24 +13,12 @@ authors = [
 [tool.maturin]
 python-source = "python"
 
-[tool.poetry]
-name = "opaquepy"
-version = "0.4.0"
-description = "Python bindings for opaque-ke."
-authors = ["Tip ten Brink <75669206+tiptenbrink@users.noreply.github.com>"]
-license = "Apache-2"
-packages = [
-    { include = "opaquepy", from = "python" },
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4,<9",
+    "mypy==1.14.1",
+    "black==24.10.0"
 ]
-
-
-[tool.poetry.dependencies]
-python = ">= 3.9, <3.13"
-
-[tool.poetry.dev-dependencies]
-pytest = "^7.4.2"
-mypy = "^1.5.1"
-black = "^23.9.1"
 
 [tool.mypy]
 python_version = "3.9"

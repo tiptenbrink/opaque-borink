@@ -4,17 +4,13 @@ This library is a counterpart to [@tiptenbrink/opaquewasm](https://github.com/ti
 
 ## Development
 
-First, install Poetry. Since we aim for compatibility with Python 3.9+, it's recommended to install Python 3.9 and create a virtual environment with:
+First, install uv. Since we aim for compatibility with Python 3.9+, it's recommended to install Python 3.9. 
 
-`poetry env use <path to Python 3.9 executable>`
+Do `uv sync --no-install-project` to install the dependencies, not including the project. 
 
-Then, do `poetry shell` to activate the virtual environment.
+Next, install `maturin` and build the Rust project using `maturin develop --uv` (it's recommended to install `maturin` globally using `cargo binstall maturin` or `pipx install maturin`). 
 
-Next, run `poetry install` to install the (development) dependencies.
-
-Finally, build the Rust project using `maturin develop` (it's recommended to install `maturin` globally using `cargo binstall maturin` or `pipx install maturin`). 
-
-Run the tests using `pytest`.
+Run the tests using `uv run pytest`.
 
 Note that type information is not available for the Rust functions, you will have to look at the Rust source code. Maturin builds a package structures as follows:
 - root `opaquepy` package

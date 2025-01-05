@@ -7,7 +7,7 @@ pub use crate::opaque_impl::{
 };
 pub use crate::opaque_impl::{
     LOGIN_CLIENT_MESSAGE_LEN, LOGIN_FINISH_MESSAGE_LEN, REGISTER_CLIENT_MESSAGE_LEN,
-    REGISTER_FINISH_MESSAGE_LEN, SHARED_SECRET_LEN,
+    REGISTER_FINISH_MESSAGE_LEN, SHARED_SECRET_LEN, LOGIN_CLIENT_STATE_LEN, REGISTER_CLIENT_STATE_LEN
 };
 
 #[cfg(test)]
@@ -36,7 +36,7 @@ mod tests {
         let state = "9klWX8NMmsKZmGw5i1HflGrDdwbrHXKJn2QnaKgKnA12fXuuDcTN6KTEnitZrLQMKdJrHkmhA4SJ-aF_CPkmOw";
         let password = "clientele";
         let server_message = "fDCnRbPyYdSCw_6cFCDzo5Zcd5OwV2TnWNg43eWQIyqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew";
-        let mut state = ClientStateRegistration::from_state(&decode_string(state).unwrap());
+        let mut state = ClientStateRegistration::deserialize(&decode_string(state).unwrap()).unwrap();
         let server_message = decode_string(server_message).unwrap();
         let response =
             client_register_finish(&mut state, password.as_bytes(), &server_message).unwrap();
@@ -66,7 +66,7 @@ mod tests {
         let state = "lMZg9wetFB01g4KL1laU9s4tWR9ICMptDcVJxnfAugXwVlrs8a_FCAXCHdYY_4dd3T9_USB5UodxYwF-nBg0Kyqc0oy2QNBxv2P7LDR3c85J3zV_RyBABmJOjqcium9QBOZ231WcdtANrMcQD4PSIni7OVBuOMYdDVSCcKppMEZwgZxe7bM3BLJHtj-bXiaUH7GW1YLGk3U0VpAa40p-BSqc0oy2QNBxv2P7LDR3c85J3zV_RyBABmJOjqcium9Q";
         let password = "clientele";
         let server_message = "lskLi18T8NM-WjY926___29u0RoY0XcKAz8-Wzu9gRMYWfgTuEk5qx4ZF6OZkTfpM_eufiKYIoKK2HNOTUwSf-bUsZRi9vydqe2yB3Wz5y3TiWI6CkVzACIFfbKynKGg0DQ4Sr5KYhsnMTzoF1Me27oq5sONK-R1muZ8JZpGXMB8l5mllx8-jfqFfe-8EEDIH0vyi9nzBKbzZSyexPiI00js1Vo5WU55jFWWdMldTg67WhPTgfITmgoGr-bQp-6wdwJGva12wMkvwFPptzk-0TMMu04YxIRzjC3OoKNxKtT8iOPTpq6SHFnVoMq3hwsYVFXxim36iickj0BzHeqebWVoo3FV9Da-ph8i6a7sKNGpe4Q4wN-0WpBgMurTkwvwcvhUCGMYvde0j7u1QOKDI_UjA9jeTlASlQHSmu0se7E";
-        let mut state = ClientStateLogin::from_state(&decode_string(state).unwrap());
+        let mut state = ClientStateLogin::deserialize(&decode_string(state).unwrap()).unwrap();
         let server_message = decode_string(server_message).unwrap();
         let result = client_login_finish(&mut state, password.as_bytes(), &server_message).unwrap();
         println!("{}", encode_bytes(&result.response));
