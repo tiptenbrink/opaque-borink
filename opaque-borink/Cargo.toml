@@ -12,6 +12,8 @@ description = "Simple configuration of OPAQUE, a passowrd-authenticated key exch
 [dependencies]
 opaque-ke = { version = "3.0.0", features = ["argon2"] }
 sha2 = "0.10.8"
-rand = { version = "0.8.5", default-features = false, features = ["getrandom"] }
+rand = { version = "0.8.5", default-features = false, features = ["getrandom", "std", "std_rng"] }
+generic-array = { version = "0.14.7" }
 base64 = "0.22.1"
 argon2 = "0.5.3"
+typenum = { version = "1", features = ["const-generics"] }
