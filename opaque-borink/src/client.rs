@@ -6,8 +6,9 @@ pub use crate::opaque_impl::{
     ClientRegistrationStartResult, ClientStateLogin, ClientStateRegistration,
 };
 pub use crate::opaque_impl::{
-    LOGIN_CLIENT_MESSAGE_LEN, LOGIN_FINISH_MESSAGE_LEN, REGISTER_CLIENT_MESSAGE_LEN,
-    REGISTER_FINISH_MESSAGE_LEN, SHARED_SECRET_LEN, LOGIN_CLIENT_STATE_LEN, REGISTER_CLIENT_STATE_LEN
+    LOGIN_CLIENT_MESSAGE_LEN, LOGIN_CLIENT_STATE_LEN, LOGIN_FINISH_MESSAGE_LEN,
+    REGISTER_CLIENT_MESSAGE_LEN, REGISTER_CLIENT_STATE_LEN, REGISTER_FINISH_MESSAGE_LEN,
+    SHARED_SECRET_LEN,
 };
 
 #[cfg(test)]
@@ -36,7 +37,8 @@ mod tests {
         let state = "9klWX8NMmsKZmGw5i1HflGrDdwbrHXKJn2QnaKgKnA12fXuuDcTN6KTEnitZrLQMKdJrHkmhA4SJ-aF_CPkmOw";
         let password = "clientele";
         let server_message = "fDCnRbPyYdSCw_6cFCDzo5Zcd5OwV2TnWNg43eWQIyqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew";
-        let mut state = ClientStateRegistration::deserialize(&decode_string(state).unwrap()).unwrap();
+        let mut state =
+            ClientStateRegistration::deserialize(&decode_string(state).unwrap()).unwrap();
         let server_message = decode_string(server_message).unwrap();
         let response =
             client_register_finish(&mut state, password.as_bytes(), &server_message).unwrap();

@@ -203,7 +203,11 @@ pub(crate) mod opaque_impl {
         }
 
         pub fn serialize(&self) -> [u8; REGISTER_CLIENT_STATE_LEN] {
-            self.state.as_ref().expect("Can only serialize after first step is completed!").serialize().into_array()
+            self.state
+                .as_ref()
+                .expect("Can only serialize after first step is completed!")
+                .serialize()
+                .into_array()
         }
     }
 
@@ -225,7 +229,11 @@ pub(crate) mod opaque_impl {
         }
 
         pub fn serialize(&self) -> [u8; LOGIN_CLIENT_STATE_LEN] {
-            self.state.as_ref().expect("Can only serialize after first step is completed!").serialize().into_array()
+            self.state
+                .as_ref()
+                .expect("Can only serialize after first step is completed!")
+                .serialize()
+                .into_array()
         }
     }
 
@@ -300,7 +308,7 @@ pub(crate) mod opaque_impl {
     pub const LOGIN_CLIENT_STATE_LEN: usize = 192;
     pub const LOGIN_CLIENT_MESSAGE_LEN: usize = 96;
     pub const LOGIN_FINISH_MESSAGE_LEN: usize = 64;
-    
+
     pub const REGISTER_SERVER_MESSAGE_LEN: usize = 64;
     pub const REGISTER_CLIENT_STATE_LEN: usize = 64;
     pub const REGISTER_CLIENT_MESSAGE_LEN: usize = 32;
