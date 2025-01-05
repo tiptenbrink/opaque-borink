@@ -45,8 +45,8 @@ pub(crate) mod opaque_impl {
     use opaque_ke::{
         ClientLogin, ClientLoginFinishParameters, ClientRegistration,
         ClientRegistrationFinishParameters, CredentialFinalization, CredentialRequest,
-        CredentialResponse, RegistrationRequest, RegistrationResponse,
-        RegistrationUpload, ServerLogin, ServerLoginStartParameters, ServerRegistration,
+        CredentialResponse, RegistrationRequest, RegistrationResponse, RegistrationUpload,
+        ServerLogin, ServerLoginStartParameters, ServerRegistration,
     };
     use rand::{
         rngs::{OsRng, ThreadRng},
@@ -114,7 +114,7 @@ pub(crate) mod opaque_impl {
 
         let result = ServerLogin::<Cipher>::start(
             &mut setup.rng,
-            &setup.setup,
+            setup.setup,
             Some(password_file.0.clone()),
             login_start_request,
             user_id.as_bytes(),
@@ -245,7 +245,7 @@ pub(crate) mod opaque_impl {
             RegistrationRequest::<Cipher>::deserialize(register_start_request)?;
 
         let result = ServerRegistration::<Cipher>::start(
-            &server_setup.setup,
+            server_setup.setup,
             register_start_request,
             user_id,
         )?;

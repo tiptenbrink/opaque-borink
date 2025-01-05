@@ -1,122 +1,14 @@
-pub use crate::opaque_impl::{server_register_start, server_register_finish, server_login_start, server_login_finish};
-pub use crate::opaque_impl::{ServerRegistrationStartResult, PasswordFile, ServerLoginStartResult, ServerLoginFinishResult, ServerSetup};
-pub use crate::opaque_impl::{SERVER_SETUP_LEN, SHARED_SECRET_LEN, LOGIN_SERVER_MESSAGE_LEN, LOGIN_SERVER_STATE_LEN, REGISTER_SERVER_MESSAGE_LEN, PASSWORD_FILE_LEN};
-
-// pub fn register_server(
-//     server_setup: &str,
-//     client_request: &str,
-//     credential_id: &str,
-// ) -> Result<String, Error> {
-//     let setup_bytes = b64::URL_SAFE_NO_PAD.decode(server_setup)?;
-//     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request)?;
-//     let credential_bytes = credential_id.as_bytes();
-//     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
-//     let client_request: RegistrationRequest<Cipher> =
-//         RegistrationRequest::deserialize(&request_bytes)?;
-
-//     let s = opaque_server_register(setup, client_request, credential_bytes)?;
-
-//     let response_bytes = s.message.serialize();
-//     let response_encoded = b64::URL_SAFE_NO_PAD.encode(response_bytes);
-
-//     Ok(response_encoded)
-// }
-
-// pub fn register_server_finish(client_request_finish: &str) -> Result<String, Error> {
-//     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request_finish)?;
-//     let client_request_finish: RegistrationUpload<Cipher> =
-//         RegistrationUpload::deserialize(&request_bytes)?;
-
-//     let s = opaque_server_register_finish(client_request_finish)?;
-
-//     let password_file_bytes = s.serialize();
-//     let password_file_encoded = b64::URL_SAFE_NO_PAD.encode(password_file_bytes);
-
-//     Ok(password_file_encoded)
-// }
-
-// pub fn login_server(
-//     server_setup: &str,
-//     password_file: &str,
-//     client_request: &str,
-//     credential_id: &str,
-// ) -> Result<(String, String), Error> {
-//     let password_file_bytes = b64::URL_SAFE_NO_PAD.decode(password_file)?;
-//     let setup_bytes = b64::URL_SAFE_NO_PAD.decode(server_setup)?;
-//     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request)?;
-//     let credential_bytes = credential_id.as_bytes();
-//     let setup = ServerSetup::<Cipher>::deserialize(&setup_bytes)?;
-//     let password_file = ServerRegistration::<Cipher>::deserialize(&password_file_bytes)?;
-//     let client_request: Box<CredentialRequest<Cipher>> =
-//         Box::new(CredentialRequest::deserialize(&request_bytes)?);
-
-//     let s = opaque_server_login(setup, password_file, *client_request, credential_bytes)?;
-
-//     let response_bytes = s.message.serialize();
-//     let state_bytes = s.state.serialize();
-
-//     let response_encoded = b64::URL_SAFE_NO_PAD.encode(response_bytes);
-//     let state_encoded = b64::URL_SAFE_NO_PAD.encode(state_bytes);
-
-//     Ok((response_encoded, state_encoded))
-// }
-
-// pub fn login_server_finish(
-//     client_request_finish: &str,
-//     login_state: &str,
-// ) -> Result<String, Error> {
-//     let request_bytes = b64::URL_SAFE_NO_PAD.decode(client_request_finish)?;
-//     let state_bytes = b64::URL_SAFE_NO_PAD.decode(login_state)?;
-//     let client_request_finish = Box::new(CredentialFinalization::<Cipher>::deserialize(
-//         &request_bytes,
-//     )?);
-//     let login_state = Box::new(ServerLogin::<Cipher>::deserialize(&state_bytes)?);
-
-//     let s = opaque_server_login_finish(*client_request_finish, *login_state)?;
-
-//     let session_key_bytes = s.session_key;
-//     let session_key_encoded = b64::URL_SAFE_NO_PAD.encode(session_key_bytes);
-
-//     Ok(session_key_encoded)
-// }
-
-// fn opaque_server_register(
-//     setup: ServerSetup<Cipher>,
-//     client_request: RegistrationRequest<Cipher>,
-//     credential_id_bytes: &[u8],
-// ) -> Result<ServerRegistrationStartResult<Cipher>, ProtocolError> {
-//     ServerRegistration::<Cipher>::start(&setup, client_request, credential_id_bytes)
-// }
-
-// fn opaque_server_register_finish(
-//     client_request_finish: RegistrationUpload<Cipher>,
-// ) -> Result<ServerRegistration<Cipher>, ProtocolError> {
-//     Ok(ServerRegistration::<Cipher>::finish(client_request_finish))
-// }
-
-// fn opaque_server_login(
-//     setup: ServerSetup<Cipher>,
-//     password_file: ServerRegistration<Cipher>,
-//     client_request: CredentialRequest<Cipher>,
-//     credential_id_bytes: &[u8],
-// ) -> Result<ServerLoginStartResult<Cipher>, ProtocolError> {
-//     let mut server_rng = OsRng;
-//     ServerLogin::<Cipher>::start(
-//         &mut server_rng,
-//         &setup,
-//         Some(password_file),
-//         client_request,
-//         credential_id_bytes,
-//         ServerLoginStartParameters::default(),
-//     )
-// }
-
-// fn opaque_server_login_finish(
-//     client_request_finish: CredentialFinalization<Cipher>,
-//     login_state: ServerLogin<Cipher>,
-// ) -> Result<ServerLoginFinishResult<Cipher>, ProtocolError> {
-//     login_state.finish(client_request_finish)
-// }
+pub use crate::opaque_impl::{
+    server_login_finish, server_login_start, server_register_finish, server_register_start,
+};
+pub use crate::opaque_impl::{
+    PasswordFile, ServerLoginFinishResult, ServerLoginStartResult, ServerRegistrationStartResult,
+    ServerSetup,
+};
+pub use crate::opaque_impl::{
+    LOGIN_SERVER_MESSAGE_LEN, LOGIN_SERVER_STATE_LEN, PASSWORD_FILE_LEN,
+    REGISTER_SERVER_MESSAGE_LEN, SERVER_SETUP_LEN, SHARED_SECRET_LEN,
+};
 
 #[cfg(test)]
 mod tests {
@@ -135,7 +27,8 @@ mod tests {
         let setup = ServerSetup::deserialize(&setup).unwrap();
         let message = decode_string(message).unwrap();
 
-        let response = server_register_start(&mut setup.view(), &message, cred_id.as_bytes()).unwrap();
+        let response =
+            server_register_start(&mut setup.view(), &message, cred_id.as_bytes()).unwrap();
         println!("{}", encode_bytes(&response.response));
         // example response
         // fDCnRbPyYdSCw_6cFCDzo5Zcd5OwV2TnWNg43eWQIyqASLH7HrrwUUQdYwcPA8Bigtj_ISL-GC9iHKheKl0rew
@@ -144,7 +37,8 @@ mod tests {
     #[test]
     fn test_server_register_finish() {
         let client_message = "LJ0rg3mSZ-x1tDbobI0xvroBjAPQ5fnAgrnEmxc67giA0XDjR8pJaOuNGlWtRku5Hk57yBlL6YrjBUQJ--7OMhPZra40WvmWSu7yT8s-CBAsE0jobWK-9qXk3xDv7TlK-g_TF3JzR3s8MntBWjIuN5Ii7Le93coLGLvm7xjQtuYHbszz3HBv-gBu_xlj7YitpgyQzYpcJGslbezqxEvZz4Jz0R64np94JBDibI7syTw13ZJ74tbjWiJbvwvKb5a-";
-        let password_file = server_register_finish(&decode_string(client_message).unwrap()).unwrap();
+        let password_file =
+            server_register_finish(&decode_string(client_message).unwrap()).unwrap();
         println!("{}", encode_bytes(&password_file.serialize()))
 
         // example file:
@@ -159,9 +53,12 @@ mod tests {
         let password_file = "LJ0rg3mSZ-x1tDbobI0xvroBjAPQ5fnAgrnEmxc67giA0XDjR8pJaOuNGlWtRku5Hk57yBlL6YrjBUQJ--7OMhPZra40WvmWSu7yT8s-CBAsE0jobWK-9qXk3xDv7TlK-g_TF3JzR3s8MntBWjIuN5Ii7Le93coLGLvm7xjQtuYHbszz3HBv-gBu_xlj7YitpgyQzYpcJGslbezqxEvZz4Jz0R64np94JBDibI7syTw13ZJ74tbjWiJbvwvKb5a-";
         let cred_id = "someperson";
         let setup = ServerSetup::deserialize(&decode_string(setup).unwrap()).unwrap();
-        let password_file = PasswordFile::deserialize(&decode_string(password_file).unwrap()).unwrap();
+        let password_file =
+            PasswordFile::deserialize(&decode_string(password_file).unwrap()).unwrap();
         let client_message = decode_string(client_message).unwrap();
-        let result = server_login_start(&mut setup.view(), &password_file, &client_message, &cred_id).unwrap();
+        let result =
+            server_login_start(&mut setup.view(), &password_file, &client_message, cred_id)
+                .unwrap();
 
         println!("resp={}", encode_bytes(&result.response));
         println!("state={}", encode_bytes(&result.state));
