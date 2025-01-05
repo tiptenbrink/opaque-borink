@@ -6,7 +6,7 @@ This library is a counterpart to [@tiptenbrink/opaquewasm](https://github.com/ti
 
 First, install uv. Since we aim for compatibility with Python 3.9+, it's recommended to install Python 3.9. 
 
-Do `uv sync --no-install-project` to install the dependencies, not including the project. 
+Do `uv sync --no-install-project --locked` to install the dependencies, not including the project. 
 
 Next, install `maturin` and build the Rust project using `maturin develop --uv` (it's recommended to install `maturin` globally using `cargo binstall maturin` or `pipx install maturin`). 
 
