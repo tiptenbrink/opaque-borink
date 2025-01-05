@@ -13,35 +13,28 @@ jobs:
   test-linux:
     strategy:
       matrix:
-        py-version: ['3.9', '3.10', '3.11', '3.12']
+        py-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     runs-on: ubuntu-latest
     steps:
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: maturin@1.8.1
     - name: Checkout opaquepy
       uses: actions/checkout@v3
     - run: cd opaquepy
-    - uses: actions/setup-python@v4
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@v5
       with:
+        version: "0.5.5"
         python-version: ${{ matrix.py-version }}
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        virtualenvs-create: true
-        # .venv is created in project
-        virtualenvs-in-project: true
-        installer-parallel: true
     - name: Install dependencies
-      run: poetry install --no-interaction --no-root
-      working-directory: ${{ github.workspace }}/opaquepy
-    - name: Install library
-      run: poetry install --no-interaction
+      run: uv sync --no-install-project --locked
       working-directory: ${{ github.workspace }}/opaquepy
     - name: Maturin develop
-      uses: PyO3/maturin-action@v1
-      with:
-        command: develop
-        working-directory: ${{ github.workspace }}/opaquepy
-    - name: poetry pytest
-      run: poetry run pytest
+      run: maturin develop --uv
+      working-directory: ${{ github.workspace }}/opaquepy
+    - name: pytest
+      run: uv run pytest
       working-directory: ${{ github.workspace }}/opaquepy
 
   build-macos:
@@ -50,7 +43,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        py-version: [ '3.9', '3.10', '3.11', '3.12' ]
+        py-version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -79,7 +72,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        py-version: ['3.9', '3.10', '3.11', '3.12']
+        py-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -103,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        py-version: [ '3.9', '3.10', '3.11', '3.12' ]
+        py-version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
