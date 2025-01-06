@@ -3,7 +3,7 @@ pub use crate::opaque_impl::{
 };
 pub use crate::opaque_impl::{
     PasswordFile, ServerLoginFinishResult, ServerLoginStartResult, ServerRegistrationStartResult,
-    ServerSetup,
+    ServerSetup, ServerSetupView
 };
 pub use crate::opaque_impl::{
     LOGIN_SERVER_MESSAGE_LEN, LOGIN_SERVER_STATE_LEN, PASSWORD_FILE_LEN,
