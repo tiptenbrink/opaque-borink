@@ -465,6 +465,25 @@ pub(crate) mod opaque_impl {
     }
 }
 
+#[cfg(test)]
+pub mod test_util {
+    use super::opaque_impl::*;
+
+    pub fn gen_password_file_with_setup_and_pw(setup: &mut ServerSetupView, user_id: &[u8], password: &[u8]) -> PasswordFile {
+        let mut client_state = ClientStateRegistration::setup();
+
+        let client_start = client_register_start(&mut client_state, password).unwrap();
+        
+        let server_start = server_register_start(setup, &client_start.response, user_id).unwrap();
+
+        let client_finish = client_register_finish(&mut client_state, password, &server_start.response).unwrap();
+
+        let server_finish = server_register_finish(&client_finish.response).unwrap();
+
+        server_finish
+    }
+}
+
 // The following code is taken from version 1.1.1 of https://github.com/fizyk20/generic-array under the MIT License
 // It's a backport of some functions that allow conversion to normal arrays to the version of generic array used in opaque_ke (0.14.7)
 mod generic_array_backport {
