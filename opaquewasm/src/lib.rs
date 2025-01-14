@@ -1,6 +1,7 @@
 use opaque_borink::client::{
-    client_login, client_login_finish, client_register, client_register_finish,
+    client_login_finish, client_login_start, client_register_finish, client_register_start
 };
+use opaque_borink::encoded::{decode_string, encode_bytes};
 use opaque_borink::{Error, ProtocolError};
 use std::fmt::Debug;
 use wasm_bindgen::prelude::*;
@@ -39,86 +40,98 @@ impl From<OpaqueJsError> for JsValue {
     }
 }
 
+
 #[wasm_bindgen]
-pub struct MessageState {
-    message: String,
-    state: String,
+pub struct ClientStateRegistration {
+    state: opaque_borink::client::ClientStateRegistration,
+    message: String
 }
 
 #[wasm_bindgen]
-impl MessageState {
-    #[wasm_bindgen(constructor)]
-    pub fn new(message: String, state: String) -> Self {
-        MessageState { message, state }
-    }
-
+impl ClientStateRegistration {
     #[wasm_bindgen(getter)]
     pub fn message(&self) -> String {
         self.message.to_owned()
     }
-
-    #[wasm_bindgen(getter)]
-    pub fn state(&self) -> String {
-        self.state.to_owned()
-    }
 }
 
 #[wasm_bindgen]
-pub struct MessageSession {
-    message: String,
-    session: String,
+pub struct ClientStateLogin {
+    state: opaque_borink::client::ClientStateLogin,
+    message: String
+}
+
+#[wasm_bindgen(getter_with_clone)]
+pub struct ClientLoginResult {
+    pub message: String,
+    pub shared_secret: String
 }
 
 #[wasm_bindgen]
-impl MessageSession {
-    #[wasm_bindgen(constructor)]
-    pub fn new(message: String, session: String) -> Self {
-        Self { message, session }
-    }
-
+impl ClientStateLogin {
     #[wasm_bindgen(getter)]
     pub fn message(&self) -> String {
         self.message.to_owned()
     }
-
-    #[wasm_bindgen(getter)]
-    pub fn session(&self) -> String {
-        self.session.to_owned()
-    }
 }
 
 #[wasm_bindgen]
-pub fn client_register_wasm(password: &str) -> OpaqueJsResult<MessageState> {
-    Ok(client_register(password).map(|(message, state)| MessageState { message, state })
-        .map_err(OpaqueJsError)?)
+pub fn client_register_wasm(password: &str) -> OpaqueJsResult<ClientStateRegistration> {
+    let mut state = opaque_borink::client::ClientStateRegistration::setup();
+
+    let result = client_register_start(&mut state, password.as_bytes())
+    .map_err(OpaqueJsError)?;
+
+    Ok(ClientStateRegistration {
+        message: encode_bytes(&result.response),
+        state
+    })
 }
 
 #[wasm_bindgen]
 pub fn client_register_finish_wasm(
-    client_register_state: &str,
+    mut client_register_state: ClientStateRegistration,
     password: &str,
     server_message: &str,
 ) -> OpaqueJsResult<String> {
+    let server_message = decode_string(server_message).map_err(OpaqueJsError)?;
+
+    let result = client_register_finish(&mut client_register_state.state, password.as_bytes(), &server_message)
+    .map_err(OpaqueJsError)?;
+
     Ok(
-        client_register_finish(client_register_state, password, server_message)
-            .map_err(OpaqueJsError)?,
+        encode_bytes(&result.response)
     )
 }
 
 #[wasm_bindgen]
-pub fn client_login_wasm(password: &str) -> OpaqueJsResult<MessageState> {
-    Ok(client_login(password).map(|(message, state)| MessageState { message, state })
-        .map_err(OpaqueJsError)?)
+pub fn client_login_wasm(password: &str) -> OpaqueJsResult<ClientStateLogin> {
+    let mut state = opaque_borink::client::ClientStateLogin::setup();
+
+    let result = client_login_start(&mut state, password.as_bytes())
+    .map_err(OpaqueJsError)?;
+
+    Ok(ClientStateLogin {
+        state,
+        message: encode_bytes(&result.response)
+    })
 }
 
 #[wasm_bindgen]
 pub fn client_login_finish_wasm(
-    client_login_state: &str,
+    mut client_login_state: ClientStateLogin,
     password: &str,
     server_message: &str,
-) -> OpaqueJsResult<MessageSession> {
+) -> OpaqueJsResult<ClientLoginResult> {
+    let server_message = decode_string(server_message).map_err(OpaqueJsError)?;
+
+    let result = client_login_finish(&mut client_login_state.state, password.as_bytes(), &server_message)
+    .map_err(OpaqueJsError)?;
+
     Ok(
-        client_login_finish(client_login_state, password, server_message).map(|(message, session)| MessageSession { message, session })
-            .map_err(OpaqueJsError)?,
+        ClientLoginResult {
+            message: encode_bytes(&result.response),
+            shared_secret: encode_bytes(&result.shared_secret)
+        }        
     )
 }
